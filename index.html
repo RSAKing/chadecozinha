@@ -104,17 +104,7 @@
         const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        // User's Firebase config
-        const userFirebaseConfig = {
-            apiKey: "AIzaSyBVaDIEUdAQJnhZzaOQ4pz-HOFPBNHDv1Q",
-            authDomain: "chadecozinha-acccc.firebaseapp.com",
-            projectId: "chadecozinha-acccc",
-            storageBucket: "chadecozinha-acccc.firebasestorage.app",
-            messagingSenderId: "459148741363",
-            appId: "1:459148741363:web:bb343ec60f71d737184586"
-        };
-
-        const app = initializeApp(userFirebaseConfig);
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         
@@ -129,6 +119,12 @@
                 console.log("Usuário autenticado com sucesso.");
             } catch (error) {
                 console.error("Erro na autenticação:", error);
+                // Check for specific permission denied error
+                if (error.code === 'permission-denied') {
+                    showMessage("Erro de permissão! Por favor, verifique as regras de segurança do seu Firebase.", 'error');
+                } else {
+                    showMessage("Não foi possível carregar a lista de presentes. Tente recarregar a página.", 'error');
+                }
             }
         }
 
@@ -365,7 +361,12 @@
                     renderGifts(giftsData, user.uid);
                 }, (error) => {
                     console.error("Erro ao carregar os dados:", error);
-                    showMessage("Não foi possível carregar a lista de presentes. Tente recarregar a página.", 'error');
+                    // Check for specific permission denied error
+                    if (error.code === 'permission-denied') {
+                        showMessage("Erro de permissão! Por favor, verifique as regras de segurança do seu Firebase.", 'error');
+                    } else {
+                        showMessage("Não foi possível carregar a lista de presentes. Tente recarregar a página.", 'error');
+                    }
                 });
 
             } else {
