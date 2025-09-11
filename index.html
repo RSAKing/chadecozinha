@@ -111,19 +111,23 @@
         const appId = firebaseConfig.projectId;
         const initialAuthToken = null;
         
+        let db;
+        let auth;
+        
         // Use provided auth token if available, otherwise sign in anonymously
         async function authenticate() {
             try {
                 const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                
+                auth = getAuth(app);
+                db = getFirestore(app);
+
                 if (initialAuthToken) {
                     await signInWithCustomToken(auth, initialAuthToken);
                 } else {
                     await signInAnonymously(auth);
                 }
                 console.log("Usuário autenticado com sucesso.");
-                return auth;
+                return { auth, db };
             } catch (error) {
                 console.error("Erro na autenticação:", error);
                 // Check for specific permission denied error
@@ -132,6 +136,7 @@
                 } else {
                     showMessage("Não foi possível carregar a lista de presentes. Tente recarregar a página.", 'error');
                 }
+                return null;
             }
         }
 
@@ -139,7 +144,6 @@
         const GIFTS_COLLECTION_NAME = 'gifts';
         const GIFTS_PATH = `/artifacts/${appId}/public/data/${GIFTS_COLLECTION_NAME}`;
         const GUESTS_PATH = `/artifacts/${appId}/public/data/${GUESTS_COLLECTION_NAME}`;
-        const db = getFirestore();
 
         // Initial list of gifts with quantities
         const initialGiftData = [
@@ -349,42 +353,44 @@
         // --- Eventos e Inicialização ---
 
         let db, auth;
-        authenticate().then(authenticatedAuth => {
-            auth = authenticatedAuth;
-            db = getFirestore();
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    console.log("Usuário logado:", user.uid);
-                    hideMessage();
-                    await initializeDatabase();
-                    
-                    // Load guest name if it was previously saved
-                    const guestDocRef = doc(db, GUESTS_PATH, user.uid);
-                    const guestDoc = await getDoc(guestDocRef);
-                    if (guestDoc.exists() && guestDoc.data().name) {
-                        guestNameInput.value = guestDoc.data().name;
-                    }
-
-                    // Listen for real-time updates on gifts
-                    const giftsRef = collection(db, GIFTS_PATH);
-                    onSnapshot(giftsRef, (snapshot) => {
-                        const giftsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                        console.log("Dados de presentes recebidos:", giftsData);
-                        renderGifts(giftsData, user.uid);
-                    }, (error) => {
-                        console.error("Erro ao carregar os dados:", error);
-                        // Check for specific permission denied error
-                        if (error.code === 'permission-denied') {
-                            showMessage("Erro de permissão! Por favor, verifique as regras de segurança do seu Firebase.", 'error');
-                        } else {
-                            showMessage("Não foi possível carregar a lista de presentes. Tente recarregar a página.", 'error');
+        authenticate().then(result => {
+            if (result) {
+                auth = result.auth;
+                db = result.db;
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        console.log("Usuário logado:", user.uid);
+                        hideMessage();
+                        await initializeDatabase();
+                        
+                        // Load guest name if it was previously saved
+                        const guestDocRef = doc(db, GUESTS_PATH, user.uid);
+                        const guestDoc = await getDoc(guestDocRef);
+                        if (guestDoc.exists() && guestDoc.data().name) {
+                            guestNameInput.value = guestDoc.data().name;
                         }
-                    });
 
-                } else {
-                    console.log("Nenhum usuário logado.");
-                }
-            });
+                        // Listen for real-time updates on gifts
+                        const giftsRef = collection(db, GIFTS_PATH);
+                        onSnapshot(giftsRef, (snapshot) => {
+                            const giftsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                            console.log("Dados de presentes recebidos:", giftsData);
+                            renderGifts(giftsData, user.uid);
+                        }, (error) => {
+                            console.error("Erro ao carregar os dados:", error);
+                            // Check for specific permission denied error
+                            if (error.code === 'permission-denied') {
+                                showMessage("Erro de permissão! Por favor, verifique as regras de segurança do seu Firebase.", 'error');
+                            } else {
+                                showMessage("Não foi possível carregar a lista de presentes. Tente recarregar a página.", 'error');
+                            }
+                        });
+
+                    } else {
+                        console.log("Nenhum usuário logado.");
+                    }
+                });
+            }
         });
         
         document.addEventListener('click', (e) => {
