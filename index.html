@@ -15,6 +15,14 @@
         .font-dancing {
             font-family: 'Dancing Script', cursive;
         }
+        /* Estilo para animação de fade-in do modal */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-gray-800">
@@ -135,8 +143,7 @@
         // ####################################################################################
         // ##                                                                                ##
         // ##  --> SUA LISTA DE PRESENTES <--                                                ##
-        // ##  Adicione a propriedade 'quantity' para definir quantas vezes um item          ##
-        // ##  pode ser escolhido. Se não for definida, será 1.                              ##
+        // ##  Ajuste os nomes, links, ícones e quantidades como desejar.                    ##
         // ##                                                                                ##
         // ####################################################################################
         const initialGiftList = [
@@ -151,12 +158,12 @@
             { name: 'Boleira', icon: '🎂', link: 'https://s.shopee.com.br/3qDcLvbz1B', quantity: 1 },
             { name: 'Cafeteira', icon: '☕', link: 'https://s.shopee.com.br/3ValoQbRR0', quantity: 1 },
             { name: 'Caneca/Leiteira', icon: '🥛', link: 'https://s.shopee.com.br/5L2Q7UIEj2', quantity: 1 },
-            { name: 'Capa para almofadas', icon: '🖼️', link: 'https://s.shopee.com.br/8URz8R9q3k', quantity: 2 },
-            { name: 'Chaleira elétrica', icon: '💨', link: 'https://s.shopee.com.br/3ValvmBdCr', quantity: 1 },
+            { name: 'Capa para almofadas', icon: '🛋️', link: 'https://s.shopee.com.br/8URz8R9q3k', quantity: 2 },
+            { name: 'Chaleira elétrica', icon: '💧', link: 'https://s.shopee.com.br/3ValvmBdCr', quantity: 1 },
             { name: 'Coberdrom', icon: '🛌', link: 'https://s.shopee.com.br/6fXnkMnIGs', quantity: 2 },
-            { name: 'Copo de medida', icon: '📏', link: 'https://s.shopee.com.br/8fIrzbJpP4', quantity: 1 },
+            { name: 'Copo de medida', icon: '🧪', link: 'https://s.shopee.com.br/8fIrzbJpP4', quantity: 1 },
             { name: 'Edredom', icon: '🛌', link: 'https://s.shopee.com.br/4fmjMJlI6I', quantity: 2 },
-            { name: 'Escorredor de louças', icon: '💧', link: 'https://s.shopee.com.br/5L2Q6UcoSm', quantity: 1 },
+            { name: 'Escorredor de louças', icon: '🍽️', link: 'https://s.shopee.com.br/5L2Q6UcoSm', quantity: 1 },
             { name: 'Escorredor de macarrão', icon: '🍝', link: 'https://s.shopee.com.br/8UzRnrNViG', quantity: 1 },
             { name: 'Espremedor de laranja', icon: '🍊', link: 'https://s.shopee.com.br/6KuxE8q6fy', quantity: 1 },
             { name: 'Ferro de passar', icon: '👔', link: 'https://s.shopee.com.br/LdkK9S2n6', quantity: 1 },
@@ -164,34 +171,34 @@
             { name: 'Jarra de suco', icon: '🍹', link: 'https://s.shopee.com.br/5AizrPyWsY', quantity: 1 },
             { name: 'Jogo americano (opção 1)', icon: '🍽️', link: 'https://s.shopee.com.br/2g1enQFqWo', quantity: 1 },
             { name: 'Jogo americano (opção 2)', icon: '🍽️', link: 'https://s.shopee.com.br/3AxvibCU1V', quantity: 1 },
-            { name: 'Jogo de cama', icon: '🛌', link: 'https://s.shopee.com.br/2g1eyITZDu', quantity: 3 },
-            { name: 'Jogo de copos', icon: '🥛', link: 'https://s.shopee.com.br/9pUpNty4yI', quantity: 2 },
-            { name: 'Jogo de copos (12 un)', icon: '🥛', link: 'https://s.shopee.com.br/9pUPNty4yI', quantity: 2 },
-            { name: 'Jogo de peneira', icon: '🥣', link: 'https://s.shopee.com.br/4fmjKSXWfa', quantity: 1 },
+            { name: 'Jogo de cama', icon: '🛏️', link: 'https://s.shopee.com.br/2g1eyITZDu', quantity: 3 },
+            { name: 'Jogo de copos', icon: '🥃', link: 'https://s.shopee.com.br/9pUpNty4yI', quantity: 2 },
+            { name: 'Jogo de copos (12 un)', icon: '🥃', link: 'https://s.shopee.com.br/9pUPNty4yI', quantity: 2 },
+            { name: 'Jogo de peneira', icon: '🧑‍🍳', link: 'https://s.shopee.com.br/4fmjKSXWfa', quantity: 1 },
             { name: 'Jogo de taças', icon: '🍷', link: 'https://s.shopee.com.br/3LHLeAQN9f', quantity: 2 },
             { name: 'Jogo de talher', icon: '🍴', link: 'https://s.shopee.com.br/30eVE11RVi', quantity: 2 },
             { name: 'Kit Bar', icon: '🍸', link: 'https://s.shopee.com.br/2ViEuztVwe', quantity: 1 },
-            { name: 'Kit Banheiro', icon: '🚽', link: 'https://s.shopee.com.br/8UzS2RWjMK', quantity: 1 },
+            { name: 'Kit Banheiro', icon: '🛁', link: 'https://s.shopee.com.br/8UzS2RWjMK', quantity: 1 },
             { name: 'Kit Churrasco', icon: '🍖', link: 'https://s.shopee.com.br/803BSwpoa2', quantity: 1 },
-            { name: 'Kit Cozinha', icon: '🥄', link: 'https://s.shopee.com.br/40X2OTzkcr', quantity: 1 },
-            { name: 'Kit Formas', icon: '🍰', link: 'https://s.shopee.com.br/9pUPPfQcBE', quantity: 1 },
+            { name: 'Kit Cozinha', icon: '🍳', link: 'https://s.shopee.com.br/40X2OTzkcr', quantity: 1 },
+            { name: 'Kit Formas', icon: '🧑‍🍳', link: 'https://s.shopee.com.br/9pUPPfQcBE', quantity: 1 },
             { name: 'Kit lavanderia/dispenser', icon: '🧼', link: 'https://s.shopee.com.br/6VENfeDjBM', quantity: 1 },
-            { name: 'Kit Marinex', icon: '🥣', link: 'https://s.shopee.com.br/50PZgLlevr', quantity: 1 },
+            { name: 'Kit Marinex', icon: '🍲', link: 'https://s.shopee.com.br/50PZgLlevr', quantity: 1 },
             { name: 'Liquidificador', icon: '🥤', link: 'https://s.shopee.com.br/7pjI2X0nHK', quantity: 1 },
             { name: 'Manta', icon: '🧣', link: 'https://s.shopee.com.br/803BL2L24E', quantity: 2 },
-            { name: 'Manta para sofá', icon: '🧣', link: 'https://s.shopee.com.br/8zviX0Miyl', quantity: 1 },
+            { name: 'Manta para sofá', icon: '🛋️', link: 'https://s.shopee.com.br/8zviX0Miyl', quantity: 1 },
             { name: 'Martelo de carne', icon: '🔨', link: 'https://s.shopee.com.br/7KnUVIDH8e', quantity: 1 },
             { name: 'Panela de pressão', icon: '🍳', link: 'https://s.shopee.com.br/2LOoVNX64A', quantity: 1 },
-            { name: 'Panela de pressão elétrica', icon: '🍳', link: 'https://s.shopee.com.br/4q69TkTEcG', quantity: 1 },
+            { name: 'Panela de pressão elétrica', icon: '⚡', link: 'https://s.shopee.com.br/4q69TkTEcG', quantity: 1 },
             { name: 'Pipoqueira', icon: '🍿', link: 'https://s.shopee.com.br/8fIs5THyvs', quantity: 1 },
             { name: 'Porta Frios (4 un)', icon: '🧀', link: 'https://s.shopee.com.br/6fXngSoK8P', quantity: 1 },
             { name: 'Pote hermético', icon: '🫙', link: 'https://s.shopee.com.br/40X2XXNzOV', quantity: 2 },
-            { name: 'Processador/mixer', icon: '🔪', link: 'https://s.shopee.com.br/3fuC7tKFD3', quantity: 1 },
+            { name: 'Processador/mixer', icon: '🌪️', link: 'https://s.shopee.com.br/3fuC7tKFD3', quantity: 1 },
             { name: 'Taça de sobremesa', icon: '🍨', link: 'https://s.shopee.com.br/5AizsrX2g8', quantity: 2 },
-            { name: 'Tampa de microondas', icon: '⚙️', link: 'https://s.shopee.com.br/9fBPIzy5dN', quantity: 1 },
+            { name: 'Tampa de microondas', icon: '🍲', link: 'https://s.shopee.com.br/9fBPIzy5dN', quantity: 1 },
             { name: 'Tapete', icon: '🚪', link: 'https://s.shopee.com.br/1g97u2fVQv', quantity: 2 },
-            { name: 'Toalha de banho', icon: '🛁', link: 'https://s.shopee.com.br/4fmjRtwQLT', quantity: 4 },
-            { name: 'Toalha de mesa', icon: '✨', link: 'https://s.shopee.com.br/2ViEaytJXK', quantity: 2 },
+            { name: 'Toalha de banho', icon: '🛀', link: 'https://s.shopee.com.br/4fmjRtwQLT', quantity: 4 },
+            { name: 'Toalha de mesa', icon: '🍽️', link: 'https://s.shopee.com.br/2ViEaytJXK', quantity: 2 },
             { name: 'Toalha de rosto', icon: '🧼', link: 'https://s.shopee.com.br/803BQGDLU0', quantity: 4 },
             { name: 'Vaso de flor', icon: '💐', link: 'https://s.shopee.com.br/803B9MwJ4Z', quantity: 1 },
         ];
@@ -222,6 +229,7 @@
         
         let guestName = '';
         let localGiftsData = []; 
+        let isListeningForGifts = false;
 
         // Função para popular a lista de presentes no Firebase (apenas se estiver vazia)
         const initializeGiftListIfNeeded = async () => {
@@ -234,10 +242,9 @@
                     const promises = initialGiftList.map(gift => {
                         return addDoc(giftsCollection, {
                             name: gift.name,
-                            icon: gift.icon || '🎁',
-                            quantity: gift.quantity || 1, // Salva a quantidade
-                            chosenCount: 0, // Contador de quantas vezes foi escolhido
-                            chosenBy: [] // Array com nomes de quem escolheu
+                            quantity: gift.quantity || 1,
+                            chosenCount: 0,
+                            chosenBy: []
                         });
                     });
                     await Promise.all(promises);
@@ -265,7 +272,7 @@
         // Função para renderizar a lista de presentes
         const renderGifts = (giftsFromFirebase) => {
             giftListContainer.innerHTML = ''; 
-            let currentUserHasChosen = false; // Flag para verificar se o usuário já escolheu algo
+            let currentUserHasChosen = false; 
 
             if (!giftsFromFirebase.length) {
                  giftListContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center">A lista de presentes ainda não foi cadastrada. Volte mais tarde!</p>`;
@@ -277,10 +284,13 @@
                     currentUserHasChosen = true;
                 }
                 const localGift = initialGiftList.find(lg => lg.name === dbGift.name);
-                return { ...dbGift, link: localGift ? localGift.link : null };
+                return { 
+                    ...dbGift, 
+                    link: localGift ? localGift.link : null,
+                    icon: localGift ? localGift.icon : '🎁'
+                };
             });
 
-            // Habilita ou desabilita o botão de finalizar com base na flag
             if (currentUserHasChosen) {
                 finishButton.disabled = false;
                 finishButton.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -291,30 +301,34 @@
                 finishButton.classList.remove('hover:bg-stone-800', 'transform', 'hover:scale-110');
             }
 
+            localGiftsData.sort((a, b) => (a.chosenCount >= a.quantity) - (b.chosenCount >= b.quantity));
+
             localGiftsData.forEach(gift => {
                 const isFullyChosen = gift.chosenCount >= gift.quantity;
                 const availableCount = gift.quantity - gift.chosenCount;
                 const card = document.createElement('div');
-                card.className = `bg-white rounded-xl shadow-md p-5 flex flex-col items-center text-center transition-all duration-300 ${isFullyChosen ? 'opacity-50 grayscale' : 'hover:shadow-lg hover:transform hover:-translate-y-1'}`;
+                card.className = `bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 overflow-hidden ${isFullyChosen ? 'opacity-50 grayscale' : 'hover:shadow-lg hover:transform hover:-translate-y-1'}`;
 
                 card.innerHTML = `
-                    <div class="text-6xl mb-4">${gift.icon || '🎁'}</div>
-                    <h3 class="font-bold text-lg text-gray-800 mb-2 flex-grow">${gift.name}</h3>
-                    <p class="font-semibold text-sm my-4 ${isFullyChosen ? 'text-red-500' : 'text-green-600'}">
-                        ${isFullyChosen ? 'Indisponível' : `Disponível (${availableCount} de ${gift.quantity})`}
-                    </p>
-                    
-                    <div class="w-full mt-auto pt-4 border-t border-gray-100 space-y-2">
-                        ${gift.link ? `<a href="${gift.link}" target="_blank" rel="noopener noreferrer" class="block w-full bg-white border border-stone-700 text-stone-700 font-bold py-2 px-4 rounded-lg hover:bg-stone-50 transition-colors duration-300">Ver produto</a>` : ''}
+                    <div class="p-5 flex flex-col items-center text-center flex-grow w-full">
+                        <div class="text-6xl mb-4">${gift.icon || '🎁'}</div>
+                        <h3 class="font-bold text-lg text-gray-800 mb-2 flex-grow">${gift.name}</h3>
+                        <p class="font-semibold text-sm my-4 ${isFullyChosen ? 'text-red-500' : 'text-green-600'}">
+                            ${isFullyChosen ? 'Indisponível' : `Disponível (${availableCount} de ${gift.quantity})`}
+                        </p>
                         
-                        <button 
-                            data-id="${gift.id}" 
-                            data-name="${gift.name}"
-                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 ${isFullyChosen ? 'bg-gray-400 cursor-not-allowed' : 'bg-stone-700 hover:bg-stone-800'}"
-                            ${isFullyChosen ? 'disabled' : ''}
-                        >
-                            ${isFullyChosen ? 'Indisponível' : 'Escolher Presente'}
-                        </button>
+                        <div class="w-full mt-auto pt-4 border-t border-gray-100 space-y-2">
+                            ${gift.link ? `<a href="${gift.link}" target="_blank" rel="noopener noreferrer" class="block w-full bg-white border border-stone-700 text-stone-700 font-bold py-2 px-4 rounded-lg hover:bg-stone-50 transition-colors duration-300">Ver produto</a>` : ''}
+                            
+                            <button 
+                                data-id="${gift.id}" 
+                                data-name="${gift.name}"
+                                class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 ${isFullyChosen ? 'bg-gray-400 cursor-not-allowed' : 'bg-stone-700 hover:bg-stone-800'}"
+                                ${isFullyChosen ? 'disabled' : ''}
+                            >
+                                ${isFullyChosen ? 'Indisponível' : 'Escolher Presente'}
+                            </button>
+                        </div>
                     </div>
                 `;
                 giftListContainer.appendChild(card);
@@ -323,8 +337,8 @@
             document.querySelectorAll('button[data-id]').forEach(button => {
                 if (!button.disabled) {
                     button.addEventListener('click', (e) => {
-                        const giftId = e.target.getAttribute('data-id');
-                        const giftName = e.target.getAttribute('data-name');
+                        const giftId = e.currentTarget.getAttribute('data-id');
+                        const giftName = e.currentTarget.getAttribute('data-name');
                         showConfirmationModal(giftId, giftName);
                     });
                 }
@@ -340,7 +354,6 @@
             currentConfirmButton.parentNode.replaceChild(newConfirmButton, currentConfirmButton);
             
             newConfirmButton.addEventListener('click', () => handleGiftSelection(giftId));
-
             document.body.style.overflow = 'hidden';
         };
 
@@ -351,12 +364,9 @@
         
         cancelButton.addEventListener('click', hideConfirmationModal);
         modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                hideConfirmationModal();
-            }
+            if (e.target === modal) hideConfirmationModal();
         });
 
-        // Função para lidar com a seleção de um presente
         const handleGiftSelection = async (giftId) => {
             if (!guestName) {
                 alert('Ocorreu um erro. Por favor, tente novamente.');
@@ -369,16 +379,10 @@
                     hideConfirmationModal();
                     return;
                 }
-
                 const giftRef = doc(db, "gifts", giftId);
-                
                 const updatedChosenBy = [...currentGift.chosenBy, guestName];
                 const newChosenCount = currentGift.chosenCount + 1;
-
-                await updateDoc(giftRef, {
-                    chosenCount: newChosenCount,
-                    chosenBy: updatedChosenBy
-                });
+                await updateDoc(giftRef, { chosenCount: newChosenCount, chosenBy: updatedChosenBy });
                 hideConfirmationModal();
             } catch (error) {
                 console.error("Erro ao escolher o presente: ", error);
@@ -386,76 +390,78 @@
             }
         };
 
-        // Escuta por mudanças na coleção 'gifts' em tempo real
         const listenForGifts = () => {
+            if(isListeningForGifts) return;
+            isListeningForGifts = true;
             onSnapshot(collection(db, "gifts"), (snapshot) => {
-                const gifts = [];
-                snapshot.forEach((doc) => {
-                    gifts.push({ id: doc.id, ...doc.data() });
-                });
-                // Ordena para que itens indisponíveis fiquem no final
-                gifts.sort((a, b) => (a.chosenCount >= a.quantity) - (b.chosenCount >= b.quantity));
+                const gifts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderGifts(gifts);
             }, (error) => {
                 console.error("Erro ao buscar presentes: ", error);
-                giftListContainer.innerHTML = `<p class="text-red-500 col-span-full text-center">Não foi possível carregar a lista. Verifique sua conexão ou a configuração do Firebase.</p>`;
+                giftListContainer.innerHTML = `<p class="text-red-500 col-span-full text-center">Não foi possível carregar a lista.</p>`;
             });
         }
         
         const login = () => {
-             const name = guestNameInput.value.trim();
+            const name = guestNameInput.value.trim();
             if (name) {
                 guestName = name;
                 sessionStorage.setItem('guestName', guestName);
+                listenForGifts();
                 instructionsModal.classList.remove('hidden');
                 document.body.style.overflow = 'hidden';
             } else {
                 nameError.classList.remove('hidden');
             }
         }
-
-        const showGiftList = () => {
-            instructionsModal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-
-            guestLoginSection.classList.add('hidden');
-            giftSection.classList.remove('hidden');
-            finishButton.classList.remove('hidden');
-            welcomeGuestName.textContent = guestName;
-            listenForGifts();
-        };
-
-        closeInstructionsButton.addEventListener('click', showGiftList);
-
-        startButton.addEventListener('click', login);
-        guestNameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                login();
-            }
-        });
         
-        guestNameInput.addEventListener('input', () => {
-             nameError.classList.add('hidden');
-        });
+        const router = () => {
+            const hash = window.location.hash;
+            guestLoginSection.classList.add('hidden');
+            giftSection.classList.add('hidden');
+            thankYouSection.classList.add('hidden');
+            finishButton.classList.add('hidden');
 
+            if (hash === '#gifts' && guestName) {
+                giftSection.classList.remove('hidden');
+                finishButton.classList.remove('hidden');
+                welcomeGuestName.textContent = guestName;
+            } else if (hash === '#thanks' && guestName) {
+                thankYouSection.classList.remove('hidden');
+            } else {
+                guestLoginSection.classList.remove('hidden');
+                sessionStorage.removeItem('guestName');
+                guestName = '';
+            }
+        };
+        
+        window.addEventListener('hashchange', router);
         window.addEventListener('load', () => {
             const savedName = sessionStorage.getItem('guestName');
             if (savedName) {
                 guestName = savedName;
-                guestLoginSection.classList.add('hidden');
-                giftSection.classList.remove('hidden');
-                finishButton.classList.remove('hidden');
-                welcomeGuestName.textContent = guestName;
                 listenForGifts();
+            } else if (window.location.hash) {
+                window.location.hash = '';
             }
+            router();
         });
+
+        closeInstructionsButton.addEventListener('click', () => {
+            instructionsModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            window.location.hash = 'gifts';
+        });
+
+        startButton.addEventListener('click', login);
+        guestNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') login(); });
+        guestNameInput.addEventListener('input', () => { nameError.classList.add('hidden'); });
 
         finishButton.addEventListener('click', () => {
-            giftSection.classList.add('hidden');
-            finishButton.classList.add('hidden');
-            thankYouSection.classList.remove('hidden');
+            if (!finishButton.disabled) {
+                window.location.hash = 'thanks';
+            }
         });
-
     </script>
 </body>
 </html>
