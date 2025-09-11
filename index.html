@@ -72,7 +72,7 @@
     <script type="module">
         // Importações do Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         // ************************************************************************************
@@ -80,12 +80,12 @@
         // Siga o passo a passo no arquivo INSTRUCOES.md para obter este código.
         // ************************************************************************************
         const firebaseConfig = {
-           apiKey: "AIzaSyAvI2t9dXajuZClHUImty038scK4xwfiZs",
-           authDomain: "cha-de-cozinha-626ad.firebaseapp.com",
-           projectId: "cha-de-cozinha-626ad",
-           storageBucket: "cha-de-cozinha-626ad.firebasestorage.app",
-           messagingSenderId: "424924149259",
-           appId: "1:424924149259:web:c1cef51b6bc0dd5653790e"
+            apiKey: "AIzaSyAvI2t9dXajuZClHUImty038scK4xwfiZs",
+            authDomain: "cha-de-cozinha-626ad.firebaseapp.com",
+            projectId: "cha-de-cozinha-626ad",
+            storageBucket: "cha-de-cozinha-626ad.appspot.com",
+            messagingSenderId: "424924149259",
+            appId: "1:424924149259:web:c1cef51b6bc0dd5653790e"
         };
         // ************************************************************************************
 
@@ -137,11 +137,42 @@
         
         let guestName = '';
 
-        // Tenta autenticar o usuário anonimamente para segurança
-        signInAnonymously(auth).catch((error) => {
-            console.error("Erro na autenticação anônima:", error);
-            giftListContainer.innerHTML = `<p class="text-red-500 col-span-full text-center">Erro de autenticação. Por favor, recarregue a página.</p>`;
-        });
+        // Função para popular a lista de presentes no Firebase (apenas se estiver vazia)
+        const initializeGiftListIfNeeded = async () => {
+            const giftsCollection = collection(db, "gifts");
+            try {
+                const snapshot = await getDocs(giftsCollection);
+                
+                if (snapshot.empty) {
+                    console.log("Coleção 'gifts' está vazia. Populando com a lista inicial...");
+                    const promises = initialGiftList.map(gift => {
+                        return addDoc(giftsCollection, {
+                            name: gift.name,
+                            icon: gift.icon || '🎁',
+                            chosen: false,
+                            chosenBy: ''
+                        });
+                    });
+                    await Promise.all(promises);
+                    console.log("Lista de presentes inicializada no Firebase!");
+                } else {
+                    console.log("Coleção 'gifts' já contém dados. Nenhuma ação necessária.");
+                }
+            } catch (error) {
+                console.error("Erro ao inicializar a lista de presentes: ", error);
+            }
+        };
+
+        // Autentica o usuário e inicializa a lista de presentes
+        signInAnonymously(auth)
+            .then(() => {
+                console.log("Autenticado anonimamente com sucesso.");
+                initializeGiftListIfNeeded();
+            })
+            .catch((error) => {
+                console.error("Erro na autenticação anônima:", error);
+                giftListContainer.innerHTML = `<p class="text-red-500 col-span-full text-center">Erro de autenticação. Por favor, recarregue a página.</p>`;
+            });
 
 
         // Função para renderizar a lista de presentes
@@ -191,13 +222,12 @@
             modalItemName.textContent = giftName;
             modal.classList.remove('hidden');
             
-            // Usamos .cloneNode e .replaceWith para remover listeners antigos e evitar cliques múltiplos
             const newConfirmButton = confirmButton.cloneNode(true);
             confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
             
             newConfirmButton.addEventListener('click', () => handleGiftSelection(giftId));
 
-            document.body.style.overflow = 'hidden'; // Evita scroll da página
+            document.body.style.overflow = 'hidden';
         };
 
         // Função para esconder o modal
@@ -212,7 +242,6 @@
                 hideConfirmationModal();
             }
         });
-
 
         // Função para lidar com a seleção de um presente
         const handleGiftSelection = async (giftId) => {
@@ -240,7 +269,6 @@
                 snapshot.forEach((doc) => {
                     gifts.push({ id: doc.id, ...doc.data() });
                 });
-                // Ordena para que os disponíveis apareçam primeiro
                 gifts.sort((a, b) => a.chosen - b.chosen);
                 renderGifts(gifts);
             }, (error) => {
@@ -254,12 +282,12 @@
              const name = guestNameInput.value.trim();
             if (name) {
                 guestName = name;
-                sessionStorage.setItem('guestName', guestName); // Salva o nome na sessão
+                sessionStorage.setItem('guestName', guestName);
                 
                 guestLoginSection.classList.add('hidden');
                 giftSection.classList.remove('hidden');
                 welcomeGuestName.textContent = guestName;
-                listenForGifts(); // Começa a ouvir os presentes só depois do login
+                listenForGifts();
             } else {
                 nameError.classList.remove('hidden');
             }
