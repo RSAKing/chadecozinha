@@ -50,13 +50,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, runTransaction, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         // --- Variáveis Globais ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-        // CREDENCIAIS DO FIREBASE
+        
+        // COLE SUAS CREDENCIAIS DO FIREBASE AQUI
+        // Para encontrar suas credenciais, vá para o Console do Firebase > Configurações do Projeto > Seus aplicativos > Web.
         const firebaseConfig = {
           apiKey: "AIzaSyBVaDIEUdAQJnhZzaOQ4pz-HOFPBNHDv1Q",
           authDomain: "chadecozinha-acccc.firebaseapp.com",
@@ -65,7 +65,8 @@
           messagingSenderId: "459148741363",
           appId: "1:459148741363:web:bb343ec60f71d737184586"
         };
-        
+        const appId = firebaseConfig.projectId;
+
         // --- Elementos do DOM ---
         const loadingScreen = document.getElementById('loading-screen');
         const welcomeScreen = document.getElementById('welcome-screen');
@@ -301,8 +302,6 @@
                 db = getFirestore(app);
                 auth = getAuth(app);
                 
-                // O código foi atualizado para fazer login de forma anônima,
-                // já que o token de autenticação personalizado só funciona no ambiente Canvas.
                 await signInAnonymously(auth);
                 userId = auth.currentUser.uid;
                 
