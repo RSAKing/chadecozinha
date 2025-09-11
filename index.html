@@ -1,58 +1,111 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Presentes de Chá de Casa Nova</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(to right, #f6f8fa, #e9ecef);
+            background-color: #f7f3e9;
+            color: #4a2c2a;
+        }
+        .container {
+            max-width: 900px;
+        }
+        .btn-reserve {
+            background-color: #ff9966;
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-reserve:hover {
+            background-color: #ff7733;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-reserved {
+            background-color: #d1d5db;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="p-4 md:p-8">
+    <div class="container mx-auto bg-white p-6 md:p-10 rounded-3xl shadow-lg border-2 border-orange-200">
+        <!-- Título e Introdução -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-orange-500 mb-2">Chá de Casa Nova</h1>
+            <p class="text-lg text-gray-700">Bem-vindos à nossa lista de presentes! Ficamos felizes em celebrar este novo momento com vocês. Para nos ajudar, por favor, escolha um item e reserve-o com seu nome.</p>
+        </header>
 
-    <main class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-6 md:p-10 text-center">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">Chá de Casa Nova</h1>
-        <p class="text-lg md:text-xl text-gray-600 mb-8">
-            Bem-vindos! Para nos ajudar a montar a casa nova, por favor, escolha um item da lista abaixo.
-        </p>
-
-        <!-- Guest Name Input -->
-        <div class="mb-8">
-            <label for="guestName" class="block text-gray-700 text-sm font-bold mb-2">Seu nome e sobrenome:</label>
-            <input type="text" id="guestName" placeholder="Ex: Maria Silva" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+        <!-- Formulário do Convidado -->
+        <div class="mb-6">
+            <label for="guestName" class="block text-gray-700 font-bold mb-2">Seu Nome Completo:</label>
+            <input type="text" id="guestName" placeholder="Ex: João da Silva" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-orange-400">
         </div>
 
-        <!-- Message Box for user feedback -->
-        <div id="messageBox" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full text-center">
-                <p id="messageText" class="text-lg font-semibold text-gray-800 mb-4"></p>
-                <button onclick="closeMessageBox()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    Fechar
-                </button>
+        <div id="messageArea" class="mb-6 p-4 rounded-lg text-sm transition-all duration-300"></div>
+
+        <!-- Lista de Presentes -->
+        <h2 class="text-2xl font-bold mb-4 text-orange-500">Lista de Presentes</h2>
+        <div id="giftList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Os itens serão gerados aqui via JavaScript -->
+        </div>
+
+        <!-- Presentes Reservados pelo Usuário -->
+        <h2 class="text-2xl font-bold mt-10 mb-4 text-orange-500">Seus Presentes Reservados</h2>
+        <div id="myReservations" class="p-4 bg-orange-50 rounded-lg shadow-inner">
+            <p class="text-gray-600 italic">Você ainda não reservou nenhum presente.</p>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content mx-auto max-w-sm text-center">
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Confirmar Reserva?</h3>
+            <p class="mb-6 text-gray-600" id="modalGiftName"></p>
+            <div class="flex justify-center space-x-4">
+                <button id="confirmBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Sim</button>
+                <button id="cancelBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">Não</button>
             </div>
         </div>
+    </div>
 
-        <!-- Gift List -->
-        <div id="giftList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Gift cards will be generated here by JavaScript -->
-        </div>
-
-    </main>
-
+    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // COLOQUE SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE AQUI
-        // Você pode encontrar isso nas configurações do seu projeto Firebase na seção "Geral"
-        const firebaseConfig = {
+        // Global variables provided by the environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // User's Firebase config
+        const userFirebaseConfig = {
             apiKey: "AIzaSyBVaDIEUdAQJnhZzaOQ4pz-HOFPBNHDv1Q",
             authDomain: "chadecozinha-acccc.firebaseapp.com",
             projectId: "chadecozinha-acccc",
@@ -60,165 +113,294 @@
             messagingSenderId: "459148741363",
             appId: "1:459148741363:web:bb343ec60f71d737184586"
         };
-        // FIM DO OBJETO DE CONFIGURAÇÃO
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
+        const app = initializeApp(userFirebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        getAnalytics(app);
+        
+        // Use provided auth token if available, otherwise sign in anonymously
+        async function authenticate() {
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                console.log("Usuário autenticado com sucesso.");
+            } catch (error) {
+                console.error("Erro na autenticação:", error);
+            }
+        }
 
-        // O userId não é mais necessário para a exibição, mas ainda pode ser usado internamente
-        let userId = null;
-        const giftListElement = document.getElementById('giftList');
+        const GUESTS_COLLECTION_NAME = 'guests';
+        const GIFTS_COLLECTION_NAME = 'gifts';
+        const GIFTS_PATH = `/artifacts/${appId}/public/data/${GIFTS_COLLECTION_NAME}`;
+        const GUESTS_PATH = `/artifacts/${appId}/public/data/${GUESTS_COLLECTION_NAME}`;
 
-        // Initial gifts list with placeholder images
-        const gifts = [
-            { id: 'liquidificador', name: "Liquidificador", image: "https://placehold.co/400x300/e0f2fe/0c4a6e?text=Liquidificador", maxQuantity: 1 },
-            { id: 'pratos', name: "Jogo de Pratos", image: "https://placehold.co/400x300/f0f9ff/172554?text=Pratos", maxQuantity: 6 },
-            { id: 'cafeteira', name: "Cafeteira", image: "https://placehold.co/400x300/fef2f2/991b1b?text=Cafeteira", maxQuantity: 1 },
-            { id: 'micro-ondas', name: "Micro-ondas", image: "https://placehold.co/400x300/f3e8ff/3b0764?text=Micro-ondas", maxQuantity: 1 },
-            { id: 'panelas', name: "Conjunto de Panelas", image: "https://placehold.co/400x300/fefce8/713f12?text=Panelas", maxQuantity: 2 },
-            { id: 'toalhas', name: "Toalhas de Banho", image: "https://placehold.co/400x300/ecfdf5/042f2e?text=Toalhas", maxQuantity: 4 },
-            { id: 'aparelho-jantar', name: "Aparelho de Jantar", image: "https://placehold.co/400x300/f0fdf4/064e3b?text=Jantar", maxQuantity: 1 },
-            { id: 'ventilador', name: "Ventilador", image: "https://placehold.co/400x300/fffbeb/78350f?text=Ventilador", maxQuantity: 1 },
-            { id: 'copo-termico', name: "Copo Térmico", image: "https://placehold.co/400x300/eef2ff/312e81?text=Copo", maxQuantity: 2 },
+        // Initial list of gifts with quantities
+        const initialGiftData = [
+            { name: "Jogo de Panelas", quantity: 1 },
+            { name: "Liquidificador", quantity: 1 },
+            { name: "Batedeira", quantity: 1 },
+            { name: "Torradeira", quantity: 1 },
+            { name: "Kit de Taças de Vinho", quantity: 1 },
+            { name: "Conjunto de Pratos", quantity: 1 },
+            { name: "Kit de Talheres", quantity: 2 },
+            { name: "Conjunto de Copos", quantity: 2 },
+            { name: "Potes de Mantimentos", quantity: 2 },
+            { name: "Faqueiro", quantity: 1 },
+            { name: "Assadeiras de Vidro", quantity: 2 },
+            { name: "Jogo de Xícaras", quantity: 1 },
+            { name: "Frigideira Antiaderente", quantity: 1 },
+            { name: "Tábua de Corte", quantity: 2 },
+            { name: "Utensílios de Silicone", quantity: 1 },
+            { name: "Garrafa Térmica", quantity: 1 },
+            { name: "Panela de Pressão", quantity: 1 },
+            { name: "Cuscuzeira", quantity: 1 },
+            { name: "Leiteira", quantity: 1 },
+            { name: "Escorredor de Louças", quantity: 1 },
+            { name: "Potes Plásticos", quantity: 2 },
+            { name: "Ralador", quantity: 1 }
         ];
 
-        // Função para exibir mensagens na caixa de diálogo
-        function showMessageBox(message) {
-            const messageBox = document.getElementById('messageBox');
-            const messageText = document.getElementById('messageText');
-            messageText.textContent = message;
-            messageBox.classList.remove('hidden');
+        const giftListElement = document.getElementById('giftList');
+        const guestNameInput = document.getElementById('guestName');
+        const messageArea = document.getElementById('messageArea');
+        const myReservationsElement = document.getElementById('myReservations');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const modalGiftNameElement = document.getElementById('modalGiftName');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        let currentGiftIdToReserve = null;
+
+        // --- Funções de UI ---
+
+        function showMessage(text, type = 'info') {
+            messageArea.textContent = text;
+            messageArea.className = 'mb-6 p-4 rounded-lg text-sm transition-all duration-300';
+            if (type === 'success') {
+                messageArea.classList.add('bg-green-100', 'text-green-700');
+            } else if (type === 'error') {
+                messageArea.classList.add('bg-red-100', 'text-red-700');
+            } else {
+                messageArea.classList.add('bg-blue-100', 'text-blue-700');
+            }
+            messageArea.style.display = 'block';
         }
 
-        // Função para fechar a caixa de diálogo
-        function closeMessageBox() {
-            const messageBox = document.getElementById('messageBox');
-            messageBox.classList.add('hidden');
+        function hideMessage() {
+            messageArea.style.display = 'none';
         }
 
-        // Função para inicializar o app e os listeners
-        async function initializeAppAndListeners() {
+        function showModal(giftName) {
+            modalGiftNameElement.textContent = `Você gostaria de reservar o item "${giftName}"?`;
+            confirmationModal.style.display = 'block';
+        }
+
+        function hideModal() {
+            confirmationModal.style.display = 'none';
+        }
+
+        function renderGifts(giftsData, userId) {
+            giftListElement.innerHTML = ''; // Clear previous list
+            myReservationsElement.innerHTML = '<p class="text-gray-600 italic">Você ainda não reservou nenhum presente.</p>';
+            let userHasReserved = false;
+
+            giftsData.forEach(gift => {
+                const reservedCount = gift.reservedBy ? gift.reservedBy.length : 0;
+                const isAvailable = reservedCount < gift.quantity;
+                const isReservedByUser = gift.reservedBy && gift.reservedBy.some(res => res.userId === userId);
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 rounded-lg shadow-md border border-gray-200 transition-transform transform hover:scale-105";
+                
+                let reserveButtonHTML;
+                let reservedStatusHTML = '';
+
+                if (isReservedByUser) {
+                    userHasReserved = true;
+                    const reservation = gift.reservedBy.find(res => res.userId === userId);
+                    reservedStatusHTML = `<p class="text-xs text-orange-500 mt-1 font-semibold">Reservado por você</p>`;
+                    reserveButtonHTML = `<button disabled class="w-full py-2 px-4 rounded-lg font-semibold btn-reserved">Reservado</button>`;
+                } else if (!isAvailable) {
+                    const firstReservedBy = gift.reservedBy[0].guestName;
+                    reservedStatusHTML = `<p class="text-xs text-gray-500 mt-1">Reservado por: ${firstReservedBy}</p>`;
+                    reserveButtonHTML = `<button disabled class="w-full py-2 px-4 rounded-lg font-semibold btn-reserved">Esgotado</button>`;
+                } else {
+                    reserveButtonHTML = `<button data-id="${gift.id}" data-name="${gift.name}" class="w-full py-2 px-4 rounded-lg font-semibold btn-reserve">Reservar</button>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">${gift.name}</h3>
+                        <span class="text-sm font-medium text-gray-500">${reservedCount} de ${gift.quantity}</span>
+                    </div>
+                    ${reservedStatusHTML}
+                    <div class="mt-4">${reserveButtonHTML}</div>
+                `;
+                
+                giftListElement.appendChild(card);
+            });
+
+            // If user has reserved items, update the myReservations section
+            if (userHasReserved) {
+                myReservationsElement.innerHTML = '';
+                giftsData.forEach(gift => {
+                    const userReservation = gift.reservedBy?.find(res => res.userId === userId);
+                    if (userReservation) {
+                        const reservationItem = document.createElement('div');
+                        reservationItem.className = "p-2 border-b border-gray-200 last:border-b-0 flex justify-between items-center";
+                        reservationItem.innerHTML = `
+                            <p class="text-gray-800 font-medium">${gift.name}</p>
+                            <span class="text-xs text-gray-500">Reservado em: ${new Date(userReservation.timestamp).toLocaleDateString()}</span>
+                        `;
+                        myReservationsElement.appendChild(reservationItem);
+                    }
+                });
+            }
+        }
+
+        // --- Funções de Lógica (Firebase) ---
+
+        async function initializeDatabase() {
             try {
-                // Autenticação anônima para que o usuário possa interagir com o Firestore
-                const userCredential = await signInAnonymously(auth);
-                userId = userCredential.user.uid;
+                const giftsRef = collection(db, GIFTS_PATH);
+                const q = query(giftsRef);
+                const snapshot = await getDocs(q);
 
-                // Configura um listener em tempo real para cada presente
-                gifts.forEach(gift => {
-                    // Usamos o caminho da coleção 'gifts' no seu próprio projeto Firestore
-                    const docRef = doc(db, 'gifts', gift.id);
-                    onSnapshot(docRef, (docSnap) => {
-                        const data = docSnap.exists() ? docSnap.data() : { quantity: 0, reservedBy: [] };
-                        renderGifts({ [gift.id]: data });
-                    }, (error) => {
-                        console.error("Erro ao escutar dados:", error);
-                    });
+                if (snapshot.empty) {
+                    console.log("Banco de dados vazio. Inicializando com itens padrão.");
+                    for (const item of initialGiftData) {
+                        await addDoc(giftsRef, {
+                            name: item.name,
+                            quantity: item.quantity,
+                            reservedBy: []
+                        });
+                    }
+                    console.log("Banco de dados inicializado com sucesso.");
+                }
+            } catch (error) {
+                console.error("Erro ao inicializar o banco de dados:", error);
+            }
+        }
+
+        async function reserveGift(giftId, giftName, guestName) {
+            try {
+                if (!guestName || guestName.trim() === '') {
+                    showMessage("Por favor, digite seu nome completo para continuar.", 'error');
+                    return false;
+                }
+                
+                const giftRef = doc(db, GIFTS_PATH, giftId);
+                const giftDoc = await getDoc(giftRef);
+
+                if (giftDoc.exists()) {
+                    const giftData = giftDoc.data();
+                    const reservedCount = giftData.reservedBy ? giftData.reservedBy.length : 0;
+                    
+                    if (reservedCount < giftData.quantity) {
+                        // Check if the user has already reserved this item
+                        const isReservedByUser = giftData.reservedBy.some(res => res.userId === auth.currentUser.uid);
+                        if (isReservedByUser) {
+                            showMessage("Você já reservou este item.", 'error');
+                            return false;
+                        }
+
+                        const newReservedBy = giftData.reservedBy || [];
+                        newReservedBy.push({
+                            userId: auth.currentUser.uid,
+                            guestName: guestName,
+                            timestamp: Date.now()
+                        });
+
+                        await updateDoc(giftRef, {
+                            reservedBy: newReservedBy
+                        });
+                        
+                        // Show success message only after reservation
+                        showMessage(`🎉 Presente "${giftName}" reservado com sucesso!`, 'success');
+                        
+                        // Save guest name in a separate collection to remember it
+                        await setDoc(doc(db, GUESTS_PATH, auth.currentUser.uid), {
+                            name: guestName
+                        }, { merge: true });
+
+                        return true;
+                    } else {
+                        showMessage(`O item "${giftName}" não está mais disponível.`, 'error');
+                        return false;
+                    }
+                } else {
+                    showMessage("O presente selecionado não foi encontrado.", 'error');
+                    return false;
+                }
+            } catch (error) {
+                console.error("Erro ao reservar o presente:", error);
+                showMessage("Erro ao reservar o presente. Tente novamente.", 'error');
+                return false;
+            }
+        }
+
+        // --- Eventos e Inicialização ---
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log("Usuário logado:", user.uid);
+                hideMessage();
+                await initializeDatabase();
+                
+                // Load guest name if it was previously saved
+                const guestDocRef = doc(db, GUESTS_PATH, user.uid);
+                const guestDoc = await getDoc(guestDocRef);
+                if (guestDoc.exists() && guestDoc.data().name) {
+                    guestNameInput.value = guestDoc.data().name;
+                }
+
+                // Listen for real-time updates on gifts
+                const giftsRef = collection(db, GIFTS_PATH);
+                onSnapshot(giftsRef, (snapshot) => {
+                    const giftsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderGifts(giftsData, user.uid);
+                }, (error) => {
+                    console.error("Erro ao carregar os dados:", error);
+                    showMessage("Não foi possível carregar a lista de presentes. Tente recarregar a página.", 'error');
                 });
 
-            } catch (error) {
-                console.error("Erro ao inicializar:", error);
-                showMessageBox("Ocorreu um erro ao carregar a lista. Por favor, tente novamente.");
+            } else {
+                console.log("Nenhum usuário logado.");
             }
-        }
+        });
 
-        // Objeto para armazenar o estado atual dos presentes do Firestore
-        let currentGiftState = {};
-
-        // Função para renderizar a lista de presentes com base nos dados
-        function renderGifts(updates = {}) {
-            // Atualiza o estado local com os novos dados
-            currentGiftState = { ...currentGiftState, ...updates };
-
-            giftListElement.innerHTML = ''; // Limpa a lista antes de renderizar
-
-            gifts.forEach(gift => {
-                const reservedQuantity = currentGiftState[gift.id] ? (currentGiftState[gift.id].quantity || 0) : 0;
-                const availableQuantity = gift.maxQuantity - reservedQuantity;
-                const isAvailable = availableQuantity > 0;
-
-                const giftCard = document.createElement('div');
-                giftCard.classList.add('bg-gray-50', 'rounded-2xl', 'shadow-md', 'overflow-hidden', 'hover:shadow-xl', 'transition-shadow', 'duration-300', 'p-4', 'flex', 'flex-col', 'items-center');
-
-                giftCard.innerHTML = `
-                    <img src="${gift.image}" alt="${gift.name}" class="w-full h-48 object-cover rounded-xl mb-4">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">${gift.name}</h3>
-                    <p class="text-gray-500 mb-4 text-sm">Disponíveis: ${availableQuantity}</p>
-                    <button class="reserve-btn w-full py-2 px-4 rounded-xl font-bold transition-all duration-300
-                        ${isAvailable ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}"
-                        data-item-id="${gift.id}"
-                        ${!isAvailable ? 'disabled' : ''}>
-                        ${isAvailable ? 'Reservar' : 'Esgotado'}
-                    </button>
-                `;
-
-                giftListElement.appendChild(giftCard);
-            });
-
-            document.querySelectorAll('.reserve-btn').forEach(button => {
-                button.addEventListener('click', handleReserve);
-            });
-        }
-
-        // Lida com a ação de reserva
-        async function handleReserve(event) {
-            if (!userId) {
-                showMessageBox("O aplicativo está carregando. Por favor, tente novamente em instantes.");
-                return;
-            }
-
-            const guestNameInput = document.getElementById('guestName');
-            const guestName = guestNameInput.value.trim();
-            const itemId = event.target.getAttribute('data-item-id');
-
-            if (!guestName) {
-                showMessageBox("Por favor, digite seu nome e sobrenome antes de reservar.");
-                return;
-            }
-
-            const gift = gifts.find(g => g.id === itemId);
-            if (!gift) {
-                console.error("Item não encontrado.");
-                return;
-            }
-
-            // Referência do documento usando o caminho da sua coleção
-            const docRef = doc(db, 'gifts', itemId);
-            try {
-                // Obtém o estado atual do documento
-                const docSnap = await getDoc(docRef);
-                let currentQuantity = 0;
-                let reservedBy = [];
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    currentQuantity = data.quantity || 0;
-                    reservedBy = data.reservedBy || [];
-                }
-
-                if (currentQuantity >= gift.maxQuantity) {
-                    showMessageBox("Ops! Este item já foi reservado na quantidade máxima.");
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-reserve')) {
+                const guestName = guestNameInput.value.trim();
+                if (!guestName) {
+                    showMessage("Por favor, digite seu nome para continuar.", 'error');
+                    guestNameInput.focus();
                     return;
                 }
-
-                // Atualiza o documento com a nova reserva
-                await setDoc(docRef, {
-                    quantity: currentQuantity + 1,
-                    reservedBy: [...reservedBy, { name: guestName, userId: userId }],
-                }, { merge: true });
-
-                showMessageBox(`Parabéns, ${guestName}! Você reservou um(a) ${gift.name}. Agradecemos de coração!`);
-
-            } catch (error) {
-                console.error("Erro ao reservar presente:", error);
-                showMessageBox("Ocorreu um erro ao tentar reservar o presente. Por favor, tente novamente.");
+                
+                currentGiftIdToReserve = e.target.dataset.id;
+                const giftName = e.target.dataset.name;
+                showModal(giftName);
             }
-        }
+        });
 
-        // Inicia o processo de autenticação e carregamento dos dados quando a página for carregada.
-        document.addEventListener('DOMContentLoaded', initializeAppAndListeners);
+        confirmBtn.addEventListener('click', async () => {
+            hideModal();
+            const giftName = modalGiftNameElement.textContent.replace('Você gostaria de reservar o item "', '').replace('"?', '');
+            const success = await reserveGift(currentGiftIdToReserve, giftName, guestNameInput.value.trim());
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            hideModal();
+            currentGiftIdToReserve = null;
+        });
+        
+        // Initial authentication call
+        authenticate();
+
     </script>
 </body>
 </html>
