@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chá de Cozinha - Lista de Presentes</title>
+    <title>Chá de casa nova - Bya e Ranny</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,24 +17,35 @@
         }
     </style>
 </head>
-<body class="bg-pink-50 text-gray-800">
+<body class="bg-amber-50 text-gray-800">
 
     <!-- Container Principal -->
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
 
         <!-- Cabeçalho -->
         <header class="text-center mb-8 md:mb-12">
-            <h1 class="font-dancing text-5xl md:text-7xl text-pink-500">Nosso Chá de Cozinha</h1>
-            <p class="text-gray-500 mt-2 text-lg">Seu presente ajuda a construir nosso lar!</p>
+            <h1 class="font-dancing text-5xl md:text-7xl text-amber-800">Nosso Chá de Casa Nova</h1>
+            <p class="text-gray-500 mt-2 text-lg">Bya & Ranny</p>
         </header>
 
         <!-- Seção de Identificação do Convidado (Inicialmente visível) -->
         <section id="guest-login" class="bg-white p-8 rounded-xl shadow-md max-w-md mx-auto">
             <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">Seja bem-vindo(a)!</h2>
-            <p class="text-center mb-6 text-gray-600">Para continuar e ver a lista de presentes, por favor, digite seu nome e sobrenome.</p>
+            
+            <!-- Mensagem dos noivos -->
+            <div class="bg-amber-50/60 p-4 rounded-lg text-gray-700 text-sm text-left mb-6 border border-amber-100">
+                <p class="mb-3">A casa é nova, a vida é nova e a gente quer celebrar essa nova fase incrível da nossa vida com as pessoas mais especiais: VOCÊS! Para nos ajudar a montar o apê dos sonhos (e evitar presentes repetidos!), criamos essa listinha especial.</p>
+                <p class="mb-2 font-semibold">As cores da decoração do nosso apê são:</p>
+                <ul class="list-disc list-inside mb-4 text-gray-600">
+                    <li>Preto, cinza, branco e madeira.</li>
+                </ul>
+                <p>Qualquer dúvida, os noivos estão à disposição! 👍</p>
+            </div>
+
+            <p class="text-center mb-6 text-gray-600">Para continuar e ver a lista, digite seu nome:</p>
             <div class="space-y-4">
-                <input type="text" id="guest-name" placeholder="Seu nome e sobrenome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 transition">
-                <button id="start-button" class="w-full bg-pink-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-pink-600 transition-all duration-300 transform hover:scale-105">Ver Lista de Presentes</button>
+                <input type="text" id="guest-name" placeholder="Seu nome e sobrenome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                <button id="start-button" class="w-full bg-amber-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-amber-800 transition-all duration-300 transform hover:scale-105">Ver Lista de Presentes</button>
             </div>
             <p id="name-error" class="text-red-500 text-sm mt-2 text-center hidden">Por favor, preencha seu nome.</p>
         </section>
@@ -42,7 +53,7 @@
         <!-- Seção da Lista de Presentes (Inicialmente oculta) -->
         <section id="gift-section" class="hidden">
              <div class="text-center mb-8">
-                <p class="text-xl">Olá, <strong id="welcome-guest-name" class="text-pink-600"></strong>!</p>
+                <p class="text-xl">Olá, <strong id="welcome-guest-name" class="text-amber-900"></strong>!</p>
                 <p class="text-gray-600">Escolha um item abaixo com carinho. Agradecemos sua contribuição!</p>
             </div>
             <div id="gift-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -59,10 +70,10 @@
     <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-lg p-8 shadow-2xl max-w-sm w-full text-center transform transition-all scale-95">
             <h3 class="text-xl font-bold mb-4">Confirmar Escolha?</h3>
-            <p class="mb-6">Você está prestes a escolher <strong id="modal-item-name" class="text-pink-600"></strong>. Este item será marcado em seu nome.</p>
+            <p class="mb-6">Você está prestes a escolher <strong id="modal-item-name" class="text-amber-900"></strong>. Este item será marcado em seu nome.</p>
             <div class="flex justify-center gap-4">
                 <button id="cancel-button" class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
-                <button id="confirm-button" class="px-6 py-2 bg-pink-500 text-white font-bold rounded-lg hover:bg-pink-600 transition">Confirmar</button>
+                <button id="confirm-button" class="px-6 py-2 bg-amber-700 text-white font-bold rounded-lg hover:bg-amber-800 transition">Confirmar</button>
             </div>
         </div>
     </div>
@@ -77,7 +88,6 @@
 
         // ************************************************************************************
         // COLE A CONFIGURAÇÃO DO SEU FIREBASE AQUI
-        // Siga o passo a passo no arquivo INSTRUCOES.md para obter este código.
         // ************************************************************************************
         const firebaseConfig = {
             apiKey: "AIzaSyAvI2t9dXajuZClHUImty038scK4xwfiZs",
@@ -92,26 +102,19 @@
         // ####################################################################################
         // ##                                                                                ##
         // ##  --> SUA LISTA DE PRESENTES <--                                                ##
-        // ##  Modifique, adicione ou remova os itens abaixo como desejar.                   ##
-        // ##  O ícone é um emoji e é opcional.                                              ##
+        // ##  Adicione a propriedade 'quantity' para definir quantas vezes um item          ##
+        // ##  pode ser escolhido. Se não for definida, será 1.                              ##
         // ##                                                                                ##
         // ####################################################################################
         const initialGiftList = [
-            { name: 'Jogo de Panelas Antiaderente', icon: '🍳' },
-            { name: 'Aparelho de Jantar 20 peças', icon: '🍽️' },
-            { name: 'Faqueiro Completo Inox', icon: '🍴' },
-            { name: 'Liquidificador Turbo', icon: '🥤' },
-            { name: 'Batedeira Planetária', icon: '🍰' },
-            { name: 'Fritadeira Elétrica (Air Fryer)', icon: '🍟' },
-            { name: 'Cafeteira Expresso', icon: '☕' },
-            { name: 'Jogo de Taças de Cristal', icon: '🍷' },
-            { name: 'Jogo de Toalhas de Banho', icon: '🛀' },
-            { name: 'Edredom Queen Size', icon: '🛌' },
-            { name: 'Aspirador de Pó Vertical', icon: '🧹' },
-            { name: 'Kit de Potes de Vidro', icon: '🫙' },
-            { name: 'Chaleira Elétrica', icon: '💨' },
-            { name: 'Sanduicheira e Grill', icon: '🥪' },
-            { name: 'Escorredor de Louça Inox', icon: '💧' },
+            { name: 'Toalha de mesa', icon: '✨', link: 'https://s.shopee.com.br/2ViEaytJXK', quantity: 2 },
+            { name: 'Jogo americano (opção 1)', icon: '🍽️', link: 'https://s.shopee.com.br/2g1enQFqWo', quantity: 1 },
+            { name: 'Jogo americano (opção 2)', icon: '🍽️', link: 'https://s.shopee.com.br/3AxvibCU1V', quantity: 1 },
+            { name: 'Vaso de flor', icon: '💐', link: 'https://s.shopee.com.br/803B9MwJ4Z', quantity: 1 },
+            { name: 'Aparelho de jantar (18 peças)', icon: '🍽️', link: 'https://s.shopee.com.br/6KuxBLKnPX', quantity: 2 },
+            { name: 'Almofada', icon: '🛋️', link: 'https://s.shopee.com.br/6KuxMEPFFC', quantity: 1 },
+            { name: 'Manta para sofá', icon: '🧣', link: 'https://s.shopee.com.br/8zviX0Miyl', quantity: 1 },
+            { name: 'Capa para almofadas', icon: '🖼️', link: 'https://s.shopee.com.br/8URz8R9q3k', quantity: 2 },
         ];
         // ####################################################################################
 
@@ -135,6 +138,7 @@
         const cancelButton = document.getElementById('cancel-button');
         
         let guestName = '';
+        let localGiftsData = []; 
 
         // Função para popular a lista de presentes no Firebase (apenas se estiver vazia)
         const initializeGiftListIfNeeded = async () => {
@@ -148,14 +152,15 @@
                         return addDoc(giftsCollection, {
                             name: gift.name,
                             icon: gift.icon || '🎁',
-                            chosen: false,
-                            chosenBy: ''
+                            quantity: gift.quantity || 1, // Salva a quantidade
+                            chosenCount: 0, // Contador de quantas vezes foi escolhido
+                            chosenBy: [] // Array com nomes de quem escolheu
                         });
                     });
                     await Promise.all(promises);
                     console.log("Lista de presentes inicializada no Firebase!");
                 } else {
-                    console.log("Coleção 'gifts' já contém dados. Nenhuma ação necessária.");
+                    console.log("Coleção 'gifts' já contém dados.");
                 }
             } catch (error) {
                 console.error("Erro ao inicializar a lista de presentes: ", error);
@@ -175,36 +180,48 @@
 
 
         // Função para renderizar a lista de presentes
-        const renderGifts = (gifts) => {
-            giftListContainer.innerHTML = ''; // Limpa a lista antes de renderizar
+        const renderGifts = (giftsFromFirebase) => {
+            giftListContainer.innerHTML = ''; 
 
-            if (!gifts.length) {
+            if (!giftsFromFirebase.length) {
                  giftListContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center">A lista de presentes ainda não foi cadastrada. Volte mais tarde!</p>`;
                  return;
             }
             
-            gifts.forEach(gift => {
-                const isChosen = gift.chosen;
+            localGiftsData = giftsFromFirebase.map(dbGift => {
+                const localGift = initialGiftList.find(lg => lg.name === dbGift.name);
+                return { ...dbGift, link: localGift ? localGift.link : null };
+            });
+
+            localGiftsData.forEach(gift => {
+                const isFullyChosen = gift.chosenCount >= gift.quantity;
+                const availableCount = gift.quantity - gift.chosenCount;
                 const card = document.createElement('div');
-                card.className = `bg-white rounded-xl shadow-md p-5 flex flex-col items-center text-center transition-all duration-300 ${isChosen ? 'opacity-50 grayscale' : 'hover:shadow-lg hover:transform hover:-translate-y-1'}`;
+                card.className = `bg-white rounded-xl shadow-md p-5 flex flex-col items-center text-center transition-all duration-300 ${isFullyChosen ? 'opacity-50 grayscale' : 'hover:shadow-lg hover:transform hover:-translate-y-1'}`;
 
                 card.innerHTML = `
                     <div class="text-6xl mb-4">${gift.icon || '🎁'}</div>
-                    <h3 class="font-bold text-lg text-gray-800 mb-2">${gift.name}</h3>
-                    <p class="text-gray-500 text-sm mb-4 flex-grow">${isChosen ? `Escolhido por: <strong>${gift.chosenBy}</strong>` : 'Disponível'}</p>
-                    <button 
-                        data-id="${gift.id}" 
-                        data-name="${gift.name}"
-                        class="w-full mt-auto text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 ${isChosen ? 'bg-gray-400 cursor-not-allowed' : 'bg-pink-500 hover:bg-pink-600'}"
-                        ${isChosen ? 'disabled' : ''}
-                    >
-                        ${isChosen ? 'Indisponível' : 'Escolher Presente'}
-                    </button>
+                    <h3 class="font-bold text-lg text-gray-800 mb-2 flex-grow">${gift.name}</h3>
+                    <p class="font-semibold text-sm my-4 ${isFullyChosen ? 'text-red-500' : 'text-green-600'}">
+                        ${isFullyChosen ? 'Indisponível' : `Disponível (${availableCount} de ${gift.quantity})`}
+                    </p>
+                    
+                    <div class="w-full mt-auto pt-4 border-t border-gray-100 space-y-2">
+                        ${gift.link ? `<a href="${gift.link}" target="_blank" rel="noopener noreferrer" class="block w-full bg-white border border-amber-700 text-amber-700 font-bold py-2 px-4 rounded-lg hover:bg-amber-50 transition-colors duration-300">Ver produto</a>` : ''}
+                        
+                        <button 
+                            data-id="${gift.id}" 
+                            data-name="${gift.name}"
+                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 ${isFullyChosen ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-700 hover:bg-amber-800'}"
+                            ${isFullyChosen ? 'disabled' : ''}
+                        >
+                            ${isFullyChosen ? 'Indisponível' : 'Escolher Presente'}
+                        </button>
+                    </div>
                 `;
                 giftListContainer.appendChild(card);
             });
 
-            // Adiciona evento de clique aos botões "Escolher Presente"
             document.querySelectorAll('button[data-id]').forEach(button => {
                 if (!button.disabled) {
                     button.addEventListener('click', (e) => {
@@ -216,25 +233,19 @@
             });
         };
 
-        // Função para mostrar o modal de confirmação
         const showConfirmationModal = (giftId, giftName) => {
             modalItemName.textContent = giftName;
             modal.classList.remove('hidden');
             
-            // Pega o botão de confirmação atual do DOM para evitar referências antigas e garantir que o evento de clique funcione sempre.
             let currentConfirmButton = document.getElementById('confirm-button');
-            const newConfirmButton = currentConfirmButton.cloneNode(true); // Clona para remover listeners antigos
-            
-            // Substitui o botão antigo pelo novo clone no DOM
+            const newConfirmButton = currentConfirmButton.cloneNode(true);
             currentConfirmButton.parentNode.replaceChild(newConfirmButton, currentConfirmButton);
             
-            // Adiciona o evento de clique apenas no novo botão
             newConfirmButton.addEventListener('click', () => handleGiftSelection(giftId));
 
             document.body.style.overflow = 'hidden';
         };
 
-        // Função para esconder o modal
         const hideConfirmationModal = () => {
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
@@ -254,10 +265,21 @@
                 return;
             }
             try {
+                const currentGift = localGiftsData.find(g => g.id === giftId);
+                if (!currentGift || currentGift.chosenCount >= currentGift.quantity) {
+                    alert("Ops! Parece que este item não está mais disponível. A lista foi atualizada.");
+                    hideConfirmationModal();
+                    return;
+                }
+
                 const giftRef = doc(db, "gifts", giftId);
+                
+                const updatedChosenBy = [...currentGift.chosenBy, guestName];
+                const newChosenCount = currentGift.chosenCount + 1;
+
                 await updateDoc(giftRef, {
-                    chosen: true,
-                    chosenBy: guestName
+                    chosenCount: newChosenCount,
+                    chosenBy: updatedChosenBy
                 });
                 hideConfirmationModal();
             } catch (error) {
@@ -273,7 +295,8 @@
                 snapshot.forEach((doc) => {
                     gifts.push({ id: doc.id, ...doc.data() });
                 });
-                gifts.sort((a, b) => a.chosen - b.chosen);
+                // Ordena para que itens indisponíveis fiquem no final
+                gifts.sort((a, b) => (a.chosenCount >= a.quantity) - (b.chosenCount >= b.quantity));
                 renderGifts(gifts);
             }, (error) => {
                 console.error("Erro ao buscar presentes: ", error);
@@ -281,7 +304,6 @@
             });
         }
         
-        // Lógica de Login do Convidado
         const login = () => {
              const name = guestNameInput.value.trim();
             if (name) {
@@ -308,7 +330,6 @@
              nameError.classList.add('hidden');
         });
 
-        // Verifica se o nome já está salvo na sessão ao carregar a página
         window.addEventListener('load', () => {
             const savedName = sessionStorage.getItem('guestName');
             if (savedName) {
