@@ -17,14 +17,14 @@
         }
     </style>
 </head>
-<body class="bg-amber-50 text-gray-800">
+<body class="bg-stone-100 text-gray-800">
 
     <!-- Container Principal -->
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
 
         <!-- Cabeçalho -->
         <header class="text-center mb-8 md:mb-12">
-            <h1 class="font-dancing text-5xl md:text-7xl text-amber-800">Nosso Chá de Casa Nova</h1>
+            <h1 class="font-dancing text-5xl md:text-7xl text-stone-800">Nosso Chá de Casa Nova</h1>
             <p class="text-gray-500 mt-2 text-lg">Bya & Ranny</p>
         </header>
 
@@ -33,7 +33,7 @@
             <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">Seja bem-vindo(a)!</h2>
             
             <!-- Mensagem dos noivos -->
-            <div class="bg-amber-50/60 p-4 rounded-lg text-gray-700 text-sm text-left mb-6 border border-amber-100">
+            <div class="bg-stone-50/60 p-4 rounded-lg text-gray-700 text-sm text-left mb-6 border border-stone-100">
                 <p class="mb-3">A casa é nova, a vida é nova e a gente quer celebrar essa nova fase incrível da nossa vida com as pessoas mais especiais: VOCÊS! Para nos ajudar a montar o apê dos sonhos (e evitar presentes repetidos!), criamos essa listinha especial.</p>
                 <p class="mb-2 font-semibold">As cores da decoração do nosso apê são:</p>
                 <ul class="list-disc list-inside mb-4 text-gray-600">
@@ -44,8 +44,8 @@
 
             <p class="text-center mb-6 text-gray-600">Para continuar e ver a lista, digite seu nome:</p>
             <div class="space-y-4">
-                <input type="text" id="guest-name" placeholder="Seu nome e sobrenome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
-                <button id="start-button" class="w-full bg-amber-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-amber-800 transition-all duration-300 transform hover:scale-105">Ver Lista de Presentes</button>
+                <input type="text" id="guest-name" placeholder="Seu nome e sobrenome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500 transition">
+                <button id="start-button" class="w-full bg-stone-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-stone-800 transition-all duration-300 transform hover:scale-105">Ver Lista de Presentes</button>
             </div>
             <p id="name-error" class="text-red-500 text-sm mt-2 text-center hidden">Por favor, preencha seu nome.</p>
         </section>
@@ -53,7 +53,7 @@
         <!-- Seção da Lista de Presentes (Inicialmente oculta) -->
         <section id="gift-section" class="hidden">
              <div class="text-center mb-8">
-                <p class="text-xl">Olá, <strong id="welcome-guest-name" class="text-amber-900"></strong>!</p>
+                <p class="text-xl">Olá, <strong id="welcome-guest-name" class="text-stone-900"></strong>!</p>
                 <p class="text-gray-600">Escolha um item abaixo com carinho. Agradecemos sua contribuição!</p>
             </div>
             <div id="gift-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -64,16 +64,49 @@
             </div>
         </section>
 
+        <!-- Seção de Agradecimento (Inicialmente oculta) -->
+        <section id="thank-you-section" class="hidden text-center bg-white p-8 md:p-12 rounded-xl shadow-md max-w-lg mx-auto">
+            <h2 class="text-3xl font-bold text-green-600 mb-4">✅ Suas escolhas foram salvas ✅</h2>
+            <p class="text-gray-700 text-lg mb-6">Obrigado por fazer parte disso!</p>
+            <div class="bg-stone-50/60 p-6 rounded-lg text-gray-700 space-y-4 border border-stone-100">
+                <p>Uhuuuu!🎉🎉 Seu presente vai fazer a nossa casa ainda mais bonita! Você arrasou na escolha.</p>
+                <p>Seu carinho e seu presente significam muito pra gente. Muito obrigado por nos ajudar a montar nosso lar e por fazer parte desse momento especial para nós!💕</p>
+                <p class="font-bold text-stone-900">Esperamos você dia 01/11 para comemorar com a gente!!!</p>
+            </div>
+        </section>
+
     </div>
     
+    <!-- Botão Flutuante para Finalizar -->
+    <button id="finish-button" class="hidden fixed bottom-6 right-6 bg-stone-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 z-40 opacity-50 cursor-not-allowed" disabled>
+        Finalizar escolhas
+    </button>
+
     <!-- Modal de Confirmação -->
     <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-lg p-8 shadow-2xl max-w-sm w-full text-center transform transition-all scale-95">
             <h3 class="text-xl font-bold mb-4">Confirmar Escolha?</h3>
-            <p class="mb-6">Você está prestes a escolher <strong id="modal-item-name" class="text-amber-900"></strong>. Este item será marcado em seu nome.</p>
+            <p class="mb-6">Você está prestes a escolher <strong id="modal-item-name" class="text-stone-900"></strong>. Este item será marcado em seu nome.</p>
             <div class="flex justify-center gap-4">
                 <button id="cancel-button" class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
-                <button id="confirm-button" class="px-6 py-2 bg-amber-700 text-white font-bold rounded-lg hover:bg-amber-800 transition">Confirmar</button>
+                <button id="confirm-button" class="px-6 py-2 bg-stone-700 text-white font-bold rounded-lg hover:bg-stone-800 transition">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Instruções -->
+    <div id="instructions-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg p-8 shadow-2xl max-w-lg w-full text-left transform transition-all scale-95 animate-fade-in">
+            <h3 class="text-2xl font-bold mb-4 text-center text-stone-800">Como o site funciona? 🧐</h3>
+            <p class="mb-5 text-gray-600">Nesta lista deixamos todos os itens que agregarão no nosso cantinho. Siga esses passos para dar tudo certo com a sua escolha:</p>
+            <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                <li>Escolha os itens desejados, é possível escolher mais de um item (fique à vontade kkk 😂).</li>
+                <li>Clique em 'Ver produto' 🛍️, você será direcionado para o site do item para realizar a compra.</li>
+                <li>Após finalizar a compra, retorne nesse site e clique em 'Escolher presente' para registrar sua escolha (pra ninguém comprar o presente igual o seu kkk 😉).</li>
+                <li>Clique em 'Finalizar escolhas' ✅ para encerrar e salvar suas escolhas.</li>
+            </ol>
+            <div class="flex justify-center mt-8">
+                <button id="close-instructions-button" class="px-8 py-3 bg-stone-700 text-white font-bold rounded-lg hover:bg-stone-800 transition-transform transform hover:scale-105">Entendi!</button>
             </div>
         </div>
     </div>
@@ -177,11 +210,15 @@
         const nameError = document.getElementById('name-error');
         const giftListContainer = document.getElementById('gift-list');
         const welcomeGuestName = document.getElementById('welcome-guest-name');
+        const thankYouSection = document.getElementById('thank-you-section');
+        const finishButton = document.getElementById('finish-button');
         
         // Elementos do Modal
         const modal = document.getElementById('confirmation-modal');
         const modalItemName = document.getElementById('modal-item-name');
         const cancelButton = document.getElementById('cancel-button');
+        const instructionsModal = document.getElementById('instructions-modal');
+        const closeInstructionsButton = document.getElementById('close-instructions-button');
         
         let guestName = '';
         let localGiftsData = []; 
@@ -228,6 +265,7 @@
         // Função para renderizar a lista de presentes
         const renderGifts = (giftsFromFirebase) => {
             giftListContainer.innerHTML = ''; 
+            let currentUserHasChosen = false; // Flag para verificar se o usuário já escolheu algo
 
             if (!giftsFromFirebase.length) {
                  giftListContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center">A lista de presentes ainda não foi cadastrada. Volte mais tarde!</p>`;
@@ -235,9 +273,23 @@
             }
             
             localGiftsData = giftsFromFirebase.map(dbGift => {
+                if (dbGift.chosenBy && dbGift.chosenBy.includes(guestName)) {
+                    currentUserHasChosen = true;
+                }
                 const localGift = initialGiftList.find(lg => lg.name === dbGift.name);
                 return { ...dbGift, link: localGift ? localGift.link : null };
             });
+
+            // Habilita ou desabilita o botão de finalizar com base na flag
+            if (currentUserHasChosen) {
+                finishButton.disabled = false;
+                finishButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                finishButton.classList.add('hover:bg-stone-800', 'transform', 'hover:scale-110');
+            } else {
+                finishButton.disabled = true;
+                finishButton.classList.add('opacity-50', 'cursor-not-allowed');
+                finishButton.classList.remove('hover:bg-stone-800', 'transform', 'hover:scale-110');
+            }
 
             localGiftsData.forEach(gift => {
                 const isFullyChosen = gift.chosenCount >= gift.quantity;
@@ -253,12 +305,12 @@
                     </p>
                     
                     <div class="w-full mt-auto pt-4 border-t border-gray-100 space-y-2">
-                        ${gift.link ? `<a href="${gift.link}" target="_blank" rel="noopener noreferrer" class="block w-full bg-white border border-amber-700 text-amber-700 font-bold py-2 px-4 rounded-lg hover:bg-amber-50 transition-colors duration-300">Ver produto</a>` : ''}
+                        ${gift.link ? `<a href="${gift.link}" target="_blank" rel="noopener noreferrer" class="block w-full bg-white border border-stone-700 text-stone-700 font-bold py-2 px-4 rounded-lg hover:bg-stone-50 transition-colors duration-300">Ver produto</a>` : ''}
                         
                         <button 
                             data-id="${gift.id}" 
                             data-name="${gift.name}"
-                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 ${isFullyChosen ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-700 hover:bg-amber-800'}"
+                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 ${isFullyChosen ? 'bg-gray-400 cursor-not-allowed' : 'bg-stone-700 hover:bg-stone-800'}"
                             ${isFullyChosen ? 'disabled' : ''}
                         >
                             ${isFullyChosen ? 'Indisponível' : 'Escolher Presente'}
@@ -355,15 +407,25 @@
             if (name) {
                 guestName = name;
                 sessionStorage.setItem('guestName', guestName);
-                
-                guestLoginSection.classList.add('hidden');
-                giftSection.classList.remove('hidden');
-                welcomeGuestName.textContent = guestName;
-                listenForGifts();
+                instructionsModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
             } else {
                 nameError.classList.remove('hidden');
             }
         }
+
+        const showGiftList = () => {
+            instructionsModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+
+            guestLoginSection.classList.add('hidden');
+            giftSection.classList.remove('hidden');
+            finishButton.classList.remove('hidden');
+            welcomeGuestName.textContent = guestName;
+            listenForGifts();
+        };
+
+        closeInstructionsButton.addEventListener('click', showGiftList);
 
         startButton.addEventListener('click', login);
         guestNameInput.addEventListener('keypress', (e) => {
@@ -382,9 +444,16 @@
                 guestName = savedName;
                 guestLoginSection.classList.add('hidden');
                 giftSection.classList.remove('hidden');
+                finishButton.classList.remove('hidden');
                 welcomeGuestName.textContent = guestName;
                 listenForGifts();
             }
+        });
+
+        finishButton.addEventListener('click', () => {
+            giftSection.classList.add('hidden');
+            finishButton.classList.add('hidden');
+            thankYouSection.classList.remove('hidden');
         });
 
     </script>
