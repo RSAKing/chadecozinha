@@ -132,7 +132,6 @@
         // Elementos do Modal
         const modal = document.getElementById('confirmation-modal');
         const modalItemName = document.getElementById('modal-item-name');
-        const confirmButton = document.getElementById('confirm-button');
         const cancelButton = document.getElementById('cancel-button');
         
         let guestName = '';
@@ -222,9 +221,14 @@
             modalItemName.textContent = giftName;
             modal.classList.remove('hidden');
             
-            const newConfirmButton = confirmButton.cloneNode(true);
-            confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
+            // Pega o botão de confirmação atual do DOM para evitar referências antigas e garantir que o evento de clique funcione sempre.
+            let currentConfirmButton = document.getElementById('confirm-button');
+            const newConfirmButton = currentConfirmButton.cloneNode(true); // Clona para remover listeners antigos
             
+            // Substitui o botão antigo pelo novo clone no DOM
+            currentConfirmButton.parentNode.replaceChild(newConfirmButton, currentConfirmButton);
+            
+            // Adiciona o evento de clique apenas no novo botão
             newConfirmButton.addEventListener('click', () => handleGiftSelection(giftId));
 
             document.body.style.overflow = 'hidden';
