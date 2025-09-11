@@ -21,11 +21,6 @@
             Bem-vindos! Para nos ajudar a montar a casa nova, por favor, escolha um item da lista abaixo.
         </p>
 
-        <!-- User ID display -->
-        <div class="mb-8 p-3 bg-gray-100 rounded-lg text-sm text-gray-600">
-            <p>Seu ID de convidado: <span id="userId">Carregando...</span></p>
-        </div>
-
         <!-- Guest Name Input -->
         <div class="mb-8">
             <label for="guestName" class="block text-gray-700 text-sm font-bold mb-2">Seu nome e sobrenome:</label>
@@ -51,13 +46,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
-
-        // Global variables provided by the environment
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // COLOQUE SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE AQUI
         // Você pode encontrar isso nas configurações do seu projeto Firebase na seção "Geral"
@@ -77,6 +68,7 @@
         const auth = getAuth(app);
         getAnalytics(app);
 
+        // O userId não é mais necessário para a exibição, mas ainda pode ser usado internamente
         let userId = null;
         const giftListElement = document.getElementById('giftList');
 
@@ -93,7 +85,7 @@
             { id: 'copo-termico', name: "Copo Térmico", image: "https://placehold.co/400x300/eef2ff/312e81?text=Copo", maxQuantity: 2 },
         ];
 
-        // Function to display messages in a custom modal
+        // Função para exibir mensagens na caixa de diálogo
         function showMessageBox(message) {
             const messageBox = document.getElementById('messageBox');
             const messageText = document.getElementById('messageText');
@@ -101,21 +93,23 @@
             messageBox.classList.remove('hidden');
         }
 
-        // Function to close the custom modal
+        // Função para fechar a caixa de diálogo
         function closeMessageBox() {
             const messageBox = document.getElementById('messageBox');
             messageBox.classList.add('hidden');
         }
 
-        // Authentication and Data Listener
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                userId = user.uid;
-                document.getElementById('userId').textContent = userId;
+        // Função para inicializar o app e os listeners
+        async function initializeAppAndListeners() {
+            try {
+                // Autenticação anônima para que o usuário possa interagir com o Firestore
+                const userCredential = await signInAnonymously(auth);
+                userId = userCredential.user.uid;
 
-                // Set up real-time listener for all gifts
+                // Configura um listener em tempo real para cada presente
                 gifts.forEach(gift => {
-                    const docRef = doc(db, `/artifacts/${appId}/public/data/gifts`, gift.id);
+                    // Usamos o caminho da coleção 'gifts' no seu próprio projeto Firestore
+                    const docRef = doc(db, 'gifts', gift.id);
                     onSnapshot(docRef, (docSnap) => {
                         const data = docSnap.exists() ? docSnap.data() : { quantity: 0, reservedBy: [] };
                         renderGifts({ [gift.id]: data });
@@ -123,29 +117,22 @@
                         console.error("Erro ao escutar dados:", error);
                     });
                 });
-            } else {
-                // If not authenticated, sign in anonymously or with custom token
-                try {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.error("Erro ao autenticar:", error);
-                }
-            }
-        });
 
-        // Object to hold the current state of gifts from Firestore
+            } catch (error) {
+                console.error("Erro ao inicializar:", error);
+                showMessageBox("Ocorreu um erro ao carregar a lista. Por favor, tente novamente.");
+            }
+        }
+
+        // Objeto para armazenar o estado atual dos presentes do Firestore
         let currentGiftState = {};
 
-        // Function to render the gift list based on the new data
+        // Função para renderizar a lista de presentes com base nos dados
         function renderGifts(updates = {}) {
-            // Update the local state with the new data
+            // Atualiza o estado local com os novos dados
             currentGiftState = { ...currentGiftState, ...updates };
 
-            giftListElement.innerHTML = ''; // Clear the list before rendering
+            giftListElement.innerHTML = ''; // Limpa a lista antes de renderizar
 
             gifts.forEach(gift => {
                 const reservedQuantity = currentGiftState[gift.id] ? (currentGiftState[gift.id].quantity || 0) : 0;
@@ -175,10 +162,10 @@
             });
         }
 
-        // Handle the reservation action
+        // Lida com a ação de reserva
         async function handleReserve(event) {
             if (!userId) {
-                showMessageBox("Aguardando autenticação. Por favor, tente novamente em instantes.");
+                showMessageBox("O aplicativo está carregando. Por favor, tente novamente em instantes.");
                 return;
             }
 
@@ -197,9 +184,10 @@
                 return;
             }
 
-            const docRef = doc(db, `/artifacts/${appId}/public/data/gifts`, itemId);
+            // Referência do documento usando o caminho da sua coleção
+            const docRef = doc(db, 'gifts', itemId);
             try {
-                // Get the current state of the document
+                // Obtém o estado atual do documento
                 const docSnap = await getDoc(docRef);
                 let currentQuantity = 0;
                 let reservedBy = [];
@@ -215,7 +203,7 @@
                     return;
                 }
 
-                // Update the document with a new reservation
+                // Atualiza o documento com a nova reserva
                 await setDoc(docRef, {
                     quantity: currentQuantity + 1,
                     reservedBy: [...reservedBy, { name: guestName, userId: userId }],
@@ -228,6 +216,9 @@
                 showMessageBox("Ocorreu um erro ao tentar reservar o presente. Por favor, tente novamente.");
             }
         }
+
+        // Inicia o processo de autenticação e carregamento dos dados quando a página for carregada.
+        document.addEventListener('DOMContentLoaded', initializeAppAndListeners);
     </script>
 </body>
 </html>
