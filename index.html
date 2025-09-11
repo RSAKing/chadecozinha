@@ -3,318 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Chá de Casa Nova</title>
+    <title>Lista de Presentes de Chá de Casa Nova</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f7f7;
-            color: #333;
+            background: linear-gradient(to right, #f6f8fa, #e9ecef);
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <!-- Tela de Carregamento -->
-    <div id="loading-screen" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500"></div>
-        <p class="mt-4 text-gray-600">Carregando...</p>
-    </div>
+    <main class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-6 md:p-10 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">Chá de Casa Nova</h1>
+        <p class="text-lg md:text-xl text-gray-600 mb-8">
+            Bem-vindos! Para nos ajudar a montar a casa nova, por favor, escolha um item da lista abaixo.
+        </p>
 
-    <!-- Tela Inicial - Nome do Convidado -->
-    <div id="welcome-screen" class="fixed inset-0 bg-gray-100 flex items-center justify-center p-4 z-40">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-            <h1 class="text-3xl font-bold text-center text-purple-600 mb-6">Bem-vindo(a) ao Chá de Casa Nova!</h1>
-            <p class="text-center text-gray-600 mb-8">Por favor, digite seu nome e sobrenome para continuar.</p>
-            <input type="text" id="guest-name-input" placeholder="Nome Sobrenome" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-200">
-            <button id="start-button" class="mt-6 w-full bg-purple-600 text-white font-semibold py-3 rounded-lg hover:bg-purple-700 transition duration-200">Entrar na Lista</button>
-        </div>
-    </div>
-
-    <!-- Tela Principal - Lista de Presentes -->
-    <div id="main-app" class="hidden flex-1 p-4 md:p-8">
-        <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-purple-600">Nossa Lista de Presentes</h1>
-            <p class="mt-2 text-lg text-gray-600">Olá, <span id="guest-name" class="font-bold"></span>! Escolha seu presente com carinho.</p>
-        </header>
-
-        <div id="items-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
-            <!-- Os itens da lista serão renderizados aqui pelo JavaScript -->
+        <!-- User ID display -->
+        <div class="mb-8 p-3 bg-gray-100 rounded-lg text-sm text-gray-600">
+            <p>Seu ID de convidado: <span id="userId">Carregando...</span></p>
         </div>
 
-        <div id="message-container" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-green-500 text-white p-3 rounded-lg shadow-xl text-center transition-transform duration-300 transform scale-0 opacity-0 z-50">
-            <!-- Mensagens de sucesso serão exibidas aqui -->
+        <!-- Guest Name Input -->
+        <div class="mb-8">
+            <label for="guestName" class="block text-gray-700 text-sm font-bold mb-2">Seu nome e sobrenome:</label>
+            <input type="text" id="guestName" placeholder="Ex: Maria Silva" class="shadow appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
         </div>
-    </div>
+
+        <!-- Message Box for user feedback -->
+        <div id="messageBox" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full text-center">
+                <p id="messageText" class="text-lg font-semibold text-gray-800 mb-4"></p>
+                <button onclick="closeMessageBox()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Fechar
+                </button>
+            </div>
+        </div>
+
+        <!-- Gift List -->
+        <div id="giftList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Gift cards will be generated here by JavaScript -->
+        </div>
+
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, runTransaction, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // --- Variáveis Globais ---
-        
-        // COLE SUAS CREDENCIAIS DO FIREBASE AQUI
-        // Para encontrar suas credenciais, vá para o Console do Firebase > Configurações do Projeto > Seus aplicativos > Web.
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
+        // Global variables provided by the environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // COLOQUE SEU OBJETO DE CONFIGURAÇÃO DO FIREBASE AQUI
+        // Você pode encontrar isso nas configurações do seu projeto Firebase na seção "Geral"
         const firebaseConfig = {
-          apiKey: "AIzaSyBVaDIEUdAQJnhZzaOQ4pz-HOFPBNHDv1Q",
-          authDomain: "chadecozinha-acccc.firebaseapp.com",
-          projectId: "chadecozinha-acccc",
-          storageBucket: "chadecozinha-acccc.firebasestorage.app",
-          messagingSenderId: "459148741363",
-          appId: "1:459148741363:web:bb343ec60f71d737184586"
+            apiKey: "AIzaSyBVaDIEUdAQJnhZzaOQ4pz-HOFPBNHDv1Q",
+            authDomain: "chadecozinha-acccc.firebaseapp.com",
+            projectId: "chadecozinha-acccc",
+            storageBucket: "chadecozinha-acccc.firebasestorage.app",
+            messagingSenderId: "459148741363",
+            appId: "1:459148741363:web:bb343ec60f71d737184586"
         };
-        const appId = firebaseConfig.projectId;
+        // FIM DO OBJETO DE CONFIGURAÇÃO
 
-        // --- Elementos do DOM ---
-        const loadingScreen = document.getElementById('loading-screen');
-        const welcomeScreen = document.getElementById('welcome-screen');
-        const mainApp = document.getElementById('main-app');
-        const startButton = document.getElementById('start-button');
-        const guestNameInput = document.getElementById('guest-name-input');
-        const guestNameDisplay = document.getElementById('guest-name');
-        const itemsList = document.getElementById('items-list');
-        const messageContainer = document.getElementById('message-container');
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        getAnalytics(app);
 
-        let db;
-        let auth;
-        let userId;
-        let guestDisplayName = '';
+        let userId = null;
+        const giftListElement = document.getElementById('giftList');
 
-        // --- Dados Iniciais dos Itens ---
-        // Se a lista de presentes estiver vazia no banco de dados, usaremos esta lista para populá-la.
-        const initialItems = [
-            { id: "prato-fundo", name: "Conjunto de Pratos Fundos", link: "https://www.exemplo.com/pratos-fundos", image: "https://placehold.co/400x300/a3e635/000?text=Pratos", initialQuantity: 6 },
-            { id: "copos-longos", name: "Conjunto de Copos Longos", link: "https://www.exemplo.com/copos-longos", image: "https://placehold.co/400x300/fde047/000?text=Copos", initialQuantity: 12 },
-            { id: "panela-inox", name: "Panela de Aço Inox", link: "https://www.exemplo.com/panela", image: "https://placehold.co/400x300/94a3b8/000?text=Panela", initialQuantity: 2 },
-            { id: "jogo-talheres", name: "Jogo de Talheres", link: "https://www.exemplo.com/talheres", image: "https://placehold.co/400x300/f43f5e/000?text=Talheres", initialQuantity: 1 },
-            { id: "toalhas-mesa", name: "Toalhas de Mesa", link: "https://www.exemplo.com/toalhas", image: "https://placehold.co/400x300/d8b4fe/000?text=Toalhas", initialQuantity: 4 },
-            { id: "aparelho-jantar", name: "Aparelho de Jantar Completo", link: "https://www.exemplo.com/aparelho-jantar", image: "https://placehold.co/400x300/6ee7b7/000?text=Aparelho", initialQuantity: 1 },
-            { id: "liquidificador", name: "Liquidificador", link: "https://www.exemplo.com/liquidificador", image: "https://placehold.co/400x300/f9a8d4/000?text=Liquidificador", initialQuantity: 1 },
-            { id: "batedeira", name: "Batedeira", link: "https://www.exemplo.com/batedeira", image: "https://placehold.co/400x300/fca5a5/000?text=Batedeira", initialQuantity: 1 }
+        // Initial gifts list with placeholder images
+        const gifts = [
+            { id: 'liquidificador', name: "Liquidificador", image: "https://placehold.co/400x300/e0f2fe/0c4a6e?text=Liquidificador", maxQuantity: 1 },
+            { id: 'pratos', name: "Jogo de Pratos", image: "https://placehold.co/400x300/f0f9ff/172554?text=Pratos", maxQuantity: 6 },
+            { id: 'cafeteira', name: "Cafeteira", image: "https://placehold.co/400x300/fef2f2/991b1b?text=Cafeteira", maxQuantity: 1 },
+            { id: 'micro-ondas', name: "Micro-ondas", image: "https://placehold.co/400x300/f3e8ff/3b0764?text=Micro-ondas", maxQuantity: 1 },
+            { id: 'panelas', name: "Conjunto de Panelas", image: "https://placehold.co/400x300/fefce8/713f12?text=Panelas", maxQuantity: 2 },
+            { id: 'toalhas', name: "Toalhas de Banho", image: "https://placehold.co/400x300/ecfdf5/042f2e?text=Toalhas", maxQuantity: 4 },
+            { id: 'aparelho-jantar', name: "Aparelho de Jantar", image: "https://placehold.co/400x300/f0fdf4/064e3b?text=Jantar", maxQuantity: 1 },
+            { id: 'ventilador', name: "Ventilador", image: "https://placehold.co/400x300/fffbeb/78350f?text=Ventilador", maxQuantity: 1 },
+            { id: 'copo-termico', name: "Copo Térmico", image: "https://placehold.co/400x300/eef2ff/312e81?text=Copo", maxQuantity: 2 },
         ];
 
-        // --- Funções Auxiliares ---
-
-        // Função para mostrar uma mensagem de sucesso na tela
-        function showMessage(text, isSuccess = true) {
-            messageContainer.textContent = text;
-            messageContainer.className = `fixed bottom-4 left-1/2 -translate-x-1/2 p-3 rounded-lg shadow-xl text-center transition-transform duration-300 transform scale-100 opacity-100 z-50 ${isSuccess ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
-            setTimeout(() => {
-                messageContainer.className = messageContainer.className.replace('scale-100 opacity-100', 'scale-0 opacity-0');
-            }, 3000);
+        // Function to display messages in a custom modal
+        function showMessageBox(message) {
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden');
         }
 
-        // Função para inicializar a lista de itens no Firestore se ela estiver vazia
-        async function initializeItems() {
-            const itemsCollection = collection(db, `artifacts/${appId}/public/data/items`);
-            const firstItemDoc = doc(itemsCollection, initialItems[0].id);
-            const docSnap = await getDoc(firstItemDoc);
-            if (!docSnap.exists()) {
-                console.log("Inicializando lista de presentes no Firestore...");
-                for (const item of initialItems) {
-                    await setDoc(doc(itemsCollection, item.id), {
-                        ...item,
-                        claimedCount: 0,
+        // Function to close the custom modal
+        function closeMessageBox() {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.classList.add('hidden');
+        }
+
+        // Authentication and Data Listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                document.getElementById('userId').textContent = userId;
+
+                // Set up real-time listener for all gifts
+                gifts.forEach(gift => {
+                    const docRef = doc(db, `/artifacts/${appId}/public/data/gifts`, gift.id);
+                    onSnapshot(docRef, (docSnap) => {
+                        const data = docSnap.exists() ? docSnap.data() : { quantity: 0, reservedBy: [] };
+                        renderGifts({ [gift.id]: data });
+                    }, (error) => {
+                        console.error("Erro ao escutar dados:", error);
                     });
+                });
+            } else {
+                // If not authenticated, sign in anonymously or with custom token
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Erro ao autenticar:", error);
                 }
             }
+        });
+
+        // Object to hold the current state of gifts from Firestore
+        let currentGiftState = {};
+
+        // Function to render the gift list based on the new data
+        function renderGifts(updates = {}) {
+            // Update the local state with the new data
+            currentGiftState = { ...currentGiftState, ...updates };
+
+            giftListElement.innerHTML = ''; // Clear the list before rendering
+
+            gifts.forEach(gift => {
+                const reservedQuantity = currentGiftState[gift.id] ? (currentGiftState[gift.id].quantity || 0) : 0;
+                const availableQuantity = gift.maxQuantity - reservedQuantity;
+                const isAvailable = availableQuantity > 0;
+
+                const giftCard = document.createElement('div');
+                giftCard.classList.add('bg-gray-50', 'rounded-2xl', 'shadow-md', 'overflow-hidden', 'hover:shadow-xl', 'transition-shadow', 'duration-300', 'p-4', 'flex', 'flex-col', 'items-center');
+
+                giftCard.innerHTML = `
+                    <img src="${gift.image}" alt="${gift.name}" class="w-full h-48 object-cover rounded-xl mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">${gift.name}</h3>
+                    <p class="text-gray-500 mb-4 text-sm">Disponíveis: ${availableQuantity}</p>
+                    <button class="reserve-btn w-full py-2 px-4 rounded-xl font-bold transition-all duration-300
+                        ${isAvailable ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}"
+                        data-item-id="${gift.id}"
+                        ${!isAvailable ? 'disabled' : ''}>
+                        ${isAvailable ? 'Reservar' : 'Esgotado'}
+                    </button>
+                `;
+
+                giftListElement.appendChild(giftCard);
+            });
+
+            document.querySelectorAll('.reserve-btn').forEach(button => {
+                button.addEventListener('click', handleReserve);
+            });
         }
 
-        // Função para renderizar um item da lista
-        function renderItem(item) {
-            const available = item.initialQuantity - item.claimedCount;
-            const isSoldOut = available <= 0;
-            const claimedByThisUser = item.claimedBy && item.claimedBy[userId];
-
-            const itemHTML = `
-                <div id="item-${item.id}" class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col items-center p-6 border-4 transition-all duration-300 ${claimedByThisUser ? 'border-purple-500' : 'border-white'}">
-                    <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover rounded-lg mb-4">
-                    <h2 class="text-2xl font-semibold text-center mb-2">${item.name}</h2>
-                    <p class="text-lg font-medium text-gray-700 mb-4 text-center">Disponível: ${available} de ${item.initialQuantity}</p>
-                    <a href="${item.link}" target="_blank" class="w-full bg-gray-200 text-gray-800 text-center font-medium py-3 rounded-lg hover:bg-gray-300 transition-colors duration-200 mb-3">Ver na Loja</a>
-                    <button id="claim-${item.id}" class="w-full font-bold py-3 rounded-lg transition-colors duration-200 ${isSoldOut ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-green-500 text-white hover:bg-green-600'}" ${isSoldOut ? 'disabled' : ''}>
-                        ${claimedByThisUser ? 'Você Pegou!' : (isSoldOut ? 'Esgotado' : 'Pegar Item')}
-                    </button>
-                    <button id="gemini-${item.id}" class="mt-3 w-full bg-purple-600 text-white font-bold py-3 rounded-lg hover:bg-purple-700 transition duration-200">
-                        Gerar Sugestão de Presente Complementar ✨
-                    </button>
-                    <div id="suggestion-box-${item.id}" class="mt-4 p-4 bg-gray-100 rounded-lg hidden w-full">
-                        <p class="text-gray-700 text-sm italic suggestion-text">Carregando sugestão...</p>
-                    </div>
-                    ${isSoldOut && item.claimedBy && Object.values(item.claimedBy).length > 0 ? `<p class="mt-2 text-sm text-center text-red-500">Pegue um item diferente!</p>` : ''}
-                </div>
-            `;
-            const div = document.createElement('div');
-            div.innerHTML = itemHTML;
-            itemsList.appendChild(div.firstElementChild);
-
-            const claimButton = document.getElementById(`claim-${item.id}`);
-            if (claimButton) {
-                claimButton.addEventListener('click', () => handleClaimItem(item.id, item.initialQuantity, item.claimedCount));
-            }
-
-            const geminiButton = document.getElementById(`gemini-${item.id}`);
-            if (geminiButton) {
-                geminiButton.addEventListener('click', () => handleGeminiSuggestion(item.name, item.id));
-            }
-        }
-
-        // Função para lidar com a ação de "pegar" um item
-        async function handleClaimItem(itemId, initialQuantity, claimedCount) {
-            if (claimedCount >= initialQuantity) {
-                showMessage('Este item já está esgotado!', false);
+        // Handle the reservation action
+        async function handleReserve(event) {
+            if (!userId) {
+                showMessageBox("Aguardando autenticação. Por favor, tente novamente em instantes.");
                 return;
             }
 
-            const itemRef = doc(db, `artifacts/${appId}/public/data/items`, itemId);
-            
-            try {
-                await runTransaction(db, async (transaction) => {
-                    const itemDoc = await transaction.get(itemRef);
-                    if (!itemDoc.exists()) {
-                        throw "Documento não existe!";
-                    }
+            const guestNameInput = document.getElementById('guestName');
+            const guestName = guestNameInput.value.trim();
+            const itemId = event.target.getAttribute('data-item-id');
 
-                    const newCount = (itemDoc.data().claimedCount || 0) + 1;
-                    const newClaimedBy = itemDoc.data().claimedBy || {};
-                    if (newClaimedBy[userId]) {
-                        throw "Você já pegou este item!";
-                    }
-                    newClaimedBy[userId] = guestDisplayName;
-
-                    if (newCount > itemDoc.data().initialQuantity) {
-                        throw "Este item foi pego por outro convidado.";
-                    }
-
-                    transaction.update(itemRef, { claimedCount: newCount, claimedBy: newClaimedBy });
-                });
-                showMessage('Item pego com sucesso! Muito obrigado(a)!');
-            } catch (e) {
-                if (e === "Você já pegou este item!") {
-                    showMessage("Você já pegou este item!", false);
-                } else if (e === "Este item foi pego por outro convidado.") {
-                    showMessage("Que pena! Este item foi pego por outro convidado.", false);
-                } else {
-                    console.error("Erro ao pegar o item:", e);
-                    showMessage('Ocorreu um erro ao pegar o item. Tente novamente.', false);
-                }
+            if (!guestName) {
+                showMessageBox("Por favor, digite seu nome e sobrenome antes de reservar.");
+                return;
             }
-        }
 
-        // Função para gerar uma sugestão de presente complementar usando a API do Gemini
-        async function handleGeminiSuggestion(itemName, itemId) {
-            const suggestionBox = document.getElementById(`suggestion-box-${itemId}`);
-            const suggestionText = suggestionBox.querySelector('.suggestion-text');
+            const gift = gifts.find(g => g.id === itemId);
+            if (!gift) {
+                console.error("Item não encontrado.");
+                return;
+            }
 
-            suggestionBox.classList.remove('hidden');
-            suggestionText.textContent = 'Carregando sugestão...';
+            const docRef = doc(db, `/artifacts/${appId}/public/data/gifts`, itemId);
+            try {
+                // Get the current state of the document
+                const docSnap = await getDoc(docRef);
+                let currentQuantity = 0;
+                let reservedBy = [];
 
-            const userQuery = `Gere uma sugestão de um pequeno presente complementar que combine com o item "${itemName}" para um chá de casa nova. A sugestão deve ser concisa e criativa.`;
-            const systemPrompt = "Você é um assistente de compras criativo e útil para eventos de chá de casa nova. Forneça uma sugestão curta, criativa e útil para um presente complementar.";
-            const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                tools: [{ "google_search": {} }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-            };
-
-            let retries = 0;
-            const maxRetries = 3;
-            const initialDelay = 1000;
-
-            const makeApiCall = async () => {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        if (response.status === 429 && retries < maxRetries) {
-                            retries++;
-                            const delay = initialDelay * Math.pow(2, retries - 1);
-                            await new Promise(res => setTimeout(res, delay));
-                            return makeApiCall();
-                        }
-                        throw new Error(`Erro na API: ${response.statusText}`);
-                    }
-
-                    const result = await response.json();
-                    const generatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (generatedText) {
-                        suggestionText.textContent = `Sugestão: ${generatedText}`;
-                    } else {
-                        suggestionText.textContent = 'Não foi possível gerar uma sugestão. Tente novamente.';
-                    }
-                } catch (error) {
-                    console.error("Erro ao gerar sugestão:", error);
-                    suggestionText.textContent = 'Erro ao gerar sugestão. Por favor, tente novamente.';
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentQuantity = data.quantity || 0;
+                    reservedBy = data.reservedBy || [];
                 }
-            };
 
-            await makeApiCall();
-        }
-
-        // Função principal para iniciar o aplicativo após a autenticação
-        async function startApp() {
-            loadingScreen.classList.add('hidden');
-            welcomeScreen.classList.remove('hidden');
-
-            // Lógica para autenticar o usuário ao clicar no botão
-            startButton.addEventListener('click', async () => {
-                const name = guestNameInput.value.trim();
-                if (name === '') {
-                    showMessage('Por favor, digite seu nome.', false);
+                if (currentQuantity >= gift.maxQuantity) {
+                    showMessageBox("Ops! Este item já foi reservado na quantidade máxima.");
                     return;
                 }
 
-                guestDisplayName = name;
-                welcomeScreen.classList.add('hidden');
-                mainApp.classList.remove('hidden');
-                guestNameDisplay.textContent = guestDisplayName;
-                
-                // Inicia o listener de dados do Firestore
-                const itemsCollectionRef = collection(db, `artifacts/${appId}/public/data/items`);
-                onSnapshot(itemsCollectionRef, (querySnapshot) => {
-                    itemsList.innerHTML = '';
-                    querySnapshot.forEach((doc) => {
-                        const itemData = doc.data();
-                        renderItem(itemData);
-                    });
-                });
-            });
+                // Update the document with a new reservation
+                await setDoc(docRef, {
+                    quantity: currentQuantity + 1,
+                    reservedBy: [...reservedBy, { name: guestName, userId: userId }],
+                }, { merge: true });
 
-            // Inicializa a lista de itens no banco de dados se não existir
-            await initializeItems();
-        }
+                showMessageBox(`Parabéns, ${guestName}! Você reservou um(a) ${gift.name}. Agradecemos de coração!`);
 
-        // --- Inicialização do Firebase e Autenticação ---
-        async function initializeFirebase() {
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                await signInAnonymously(auth);
-                userId = auth.currentUser.uid;
-                
-                console.log("Firebase autenticado com sucesso. User ID:", userId);
-                startApp();
             } catch (error) {
-                console.error("Erro na inicialização ou autenticação do Firebase:", error);
-                loadingScreen.innerHTML = `<p class="text-red-500 font-semibold text-center">Erro ao conectar com o serviço. Verifique o console para mais detalhes.</p>`;
+                console.error("Erro ao reservar presente:", error);
+                showMessageBox("Ocorreu um erro ao tentar reservar o presente. Por favor, tente novamente.");
             }
         }
-
-        // Inicia tudo
-        initializeFirebase();
     </script>
 </body>
 </html>
