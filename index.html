@@ -50,13 +50,21 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, runTransaction, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         // --- Variáveis Globais ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // CREDENCIAIS DO FIREBASE
+        const firebaseConfig = {
+          apiKey: "AIzaSyBVaDIEUdAQJnhZzaOQ4pz-HOFPBNHDv1Q",
+          authDomain: "chadecozinha-acccc.firebaseapp.com",
+          projectId: "chadecozinha-acccc",
+          storageBucket: "chadecozinha-acccc.firebasestorage.app",
+          messagingSenderId: "459148741363",
+          appId: "1:459148741363:web:bb343ec60f71d737184586"
+        };
         
         // --- Elementos do DOM ---
         const loadingScreen = document.getElementById('loading-screen');
@@ -120,7 +128,7 @@
             const claimedByThisUser = item.claimedBy && item.claimedBy[userId];
 
             const itemHTML = `
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col items-center p-6 border-4 transition-all duration-300 ${claimedByThisUser ? 'border-purple-500' : 'border-white'}">
+                <div id="item-${item.id}" class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col items-center p-6 border-4 transition-all duration-300 ${claimedByThisUser ? 'border-purple-500' : 'border-white'}">
                     <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover rounded-lg mb-4">
                     <h2 class="text-2xl font-semibold text-center mb-2">${item.name}</h2>
                     <p class="text-lg font-medium text-gray-700 mb-4 text-center">Disponível: ${available} de ${item.initialQuantity}</p>
@@ -128,6 +136,12 @@
                     <button id="claim-${item.id}" class="w-full font-bold py-3 rounded-lg transition-colors duration-200 ${isSoldOut ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-green-500 text-white hover:bg-green-600'}" ${isSoldOut ? 'disabled' : ''}>
                         ${claimedByThisUser ? 'Você Pegou!' : (isSoldOut ? 'Esgotado' : 'Pegar Item')}
                     </button>
+                    <button id="gemini-${item.id}" class="mt-3 w-full bg-purple-600 text-white font-bold py-3 rounded-lg hover:bg-purple-700 transition duration-200">
+                        Gerar Sugestão de Presente Complementar ✨
+                    </button>
+                    <div id="suggestion-box-${item.id}" class="mt-4 p-4 bg-gray-100 rounded-lg hidden w-full">
+                        <p class="text-gray-700 text-sm italic suggestion-text">Carregando sugestão...</p>
+                    </div>
                     ${isSoldOut && item.claimedBy && Object.values(item.claimedBy).length > 0 ? `<p class="mt-2 text-sm text-center text-red-500">Pegue um item diferente!</p>` : ''}
                 </div>
             `;
@@ -138,6 +152,11 @@
             const claimButton = document.getElementById(`claim-${item.id}`);
             if (claimButton) {
                 claimButton.addEventListener('click', () => handleClaimItem(item.id, item.initialQuantity, item.claimedCount));
+            }
+
+            const geminiButton = document.getElementById(`gemini-${item.id}`);
+            if (geminiButton) {
+                geminiButton.addEventListener('click', () => handleGeminiSuggestion(item.name, item.id));
             }
         }
 
@@ -183,6 +202,65 @@
             }
         }
 
+        // Função para gerar uma sugestão de presente complementar usando a API do Gemini
+        async function handleGeminiSuggestion(itemName, itemId) {
+            const suggestionBox = document.getElementById(`suggestion-box-${itemId}`);
+            const suggestionText = suggestionBox.querySelector('.suggestion-text');
+
+            suggestionBox.classList.remove('hidden');
+            suggestionText.textContent = 'Carregando sugestão...';
+
+            const userQuery = `Gere uma sugestão de um pequeno presente complementar que combine com o item "${itemName}" para um chá de casa nova. A sugestão deve ser concisa e criativa.`;
+            const systemPrompt = "Você é um assistente de compras criativo e útil para eventos de chá de casa nova. Forneça uma sugestão curta, criativa e útil para um presente complementar.";
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            let retries = 0;
+            const maxRetries = 3;
+            const initialDelay = 1000;
+
+            const makeApiCall = async () => {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 && retries < maxRetries) {
+                            retries++;
+                            const delay = initialDelay * Math.pow(2, retries - 1);
+                            await new Promise(res => setTimeout(res, delay));
+                            return makeApiCall();
+                        }
+                        throw new Error(`Erro na API: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    const generatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (generatedText) {
+                        suggestionText.textContent = `Sugestão: ${generatedText}`;
+                    } else {
+                        suggestionText.textContent = 'Não foi possível gerar uma sugestão. Tente novamente.';
+                    }
+                } catch (error) {
+                    console.error("Erro ao gerar sugestão:", error);
+                    suggestionText.textContent = 'Erro ao gerar sugestão. Por favor, tente novamente.';
+                }
+            };
+
+            await makeApiCall();
+        }
+
         // Função principal para iniciar o aplicativo após a autenticação
         async function startApp() {
             loadingScreen.classList.add('hidden');
@@ -223,21 +301,11 @@
                 db = getFirestore(app);
                 auth = getAuth(app);
                 
-                await new Promise((resolve, reject) => {
-                    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-                        if (user) {
-                            userId = user.uid;
-                            unsubscribe();
-                            resolve();
-                        } else {
-                            if (initialAuthToken) {
-                                await signInWithCustomToken(auth, initialAuthToken);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
-                        }
-                    }, reject);
-                });
+                // O código foi atualizado para fazer login de forma anônima,
+                // já que o token de autenticação personalizado só funciona no ambiente Canvas.
+                await signInAnonymously(auth);
+                userId = auth.currentUser.uid;
+                
                 console.log("Firebase autenticado com sucesso. User ID:", userId);
                 startApp();
             } catch (error) {
