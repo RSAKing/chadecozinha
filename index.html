@@ -144,9 +144,9 @@
             { name: "Batedeira", quantity: 1 },
             { name: "Torradeira", quantity: 1 },
             { name: "Kit de Taças de Vinho", quantity: 1 },
-            { name: "Conjunto de Pratos", quantity: 1 },
-            { name: "Kit de Talheres", quantity: 2 },
-            { name: "Conjunto de Copos", quantity: 2 },
+            { name: "Pratos", quantity: 10 },
+            { name: "Kit de Talheres", quantity: 1 },
+            { name: "Jogo de Copos", quantity: 2 },
             { name: "Potes de Mantimentos", quantity: 2 },
             { name: "Faqueiro", quantity: 1 },
             { name: "Assadeiras de Vidro", quantity: 2 },
@@ -361,6 +361,7 @@
                 const giftsRef = collection(db, GIFTS_PATH);
                 onSnapshot(giftsRef, (snapshot) => {
                     const giftsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    console.log("Dados de presentes recebidos:", giftsData);
                     renderGifts(giftsData, user.uid);
                 }, (error) => {
                     console.error("Erro ao carregar os dados:", error);
