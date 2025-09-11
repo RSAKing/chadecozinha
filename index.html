@@ -89,6 +89,32 @@
         };
         // ************************************************************************************
 
+        // ####################################################################################
+        // ##                                                                                ##
+        // ##  --> SUA LISTA DE PRESENTES <--                                                ##
+        // ##  Modifique, adicione ou remova os itens abaixo como desejar.                   ##
+        // ##  O ícone é um emoji e é opcional.                                              ##
+        // ##                                                                                ##
+        // ####################################################################################
+        const initialGiftList = [
+            { name: 'Jogo de Panelas Antiaderente', icon: '🍳' },
+            { name: 'Aparelho de Jantar 20 peças', icon: '🍽️' },
+            { name: 'Faqueiro Completo Inox', icon: '🍴' },
+            { name: 'Liquidificador Turbo', icon: '🥤' },
+            { name: 'Batedeira Planetária', icon: '🍰' },
+            { name: 'Fritadeira Elétrica (Air Fryer)', icon: '🍟' },
+            { name: 'Cafeteira Expresso', icon: '☕' },
+            { name: 'Jogo de Taças de Cristal', icon: '🍷' },
+            { name: 'Jogo de Toalhas de Banho', icon: '🛀' },
+            { name: 'Edredom Queen Size', icon: '🛌' },
+            { name: 'Aspirador de Pó Vertical', icon: '🧹' },
+            { name: 'Kit de Potes de Vidro', icon: '🫙' },
+            { name: 'Chaleira Elétrica', icon: '💨' },
+            { name: 'Sanduicheira e Grill', icon: '🥪' },
+            { name: 'Escorredor de Louça Inox', icon: '💧' },
+        ];
+        // ####################################################################################
+
         // Inicialização do Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
