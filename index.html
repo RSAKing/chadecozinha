@@ -142,53 +142,51 @@
 
         // ####################################################################################
         // ##                                                                                ##
-        // ##  --> LISTA DE INICIALIZAÇÃO <--                                                ##
-        // ##  Esta lista será usada APENAS na primeira vez para criar os itens no Firebase. ##
-        // ##  Depois disso, gerencie sua lista diretamente no painel do Firebase.           ##
+        // ##  --> SUA LISTA DE PRESENTES <--                                                ##
+        // ##  Ajuste os nomes, links, ícones e quantidades como desejar.                    ##
         // ##                                                                                ##
         // ####################################################################################
         const initialGiftList = [
             { name: 'Abridor de latas', icon: '🥫', link: 'https://s.shopee.com.br/9UpsV32XgH', quantity: 1 },
-            { name: 'Abridor de potes', icon: '🫙', link: 'https://s.shopee.com.br/AA7ftpI0V0', quantity: 1 },
+            { name: 'Abridor de potes', icon: '🫙', link: 'https://s.shopee.com.br/AA7ftpl0V0', quantity: 1 },
             { name: 'Airfrier', icon: '🍟', link: 'https://s.shopee.com.br/2B5ODNMGY9', quantity: 1 },
             { name: 'Almofada', icon: '🛋️', link: 'https://s.shopee.com.br/6KuxMEPFFC', quantity: 1 },
             { name: 'Amassador de batata', icon: '🥔', link: 'https://s.shopee.com.br/9zoFgmztN9', quantity: 1 },
-            { name: 'Aparelho de jantar (18 peças)', icon: '🍽️', link: 'https://s.shopee.com.br/6KuxBLKnPX', quantity: 2 },
+            { name: 'Aparelho de jantar (18 peças)', icon: '🍽️', link: 'https://s.shopee.com.br/6KuxBLKnPx', quantity: 2 },
             { name: 'Balde', icon: '🪣', link: 'https://s.shopee.com.br/4L9t5PbEqp', quantity: 2 },
             { name: 'Batedeira', icon: '🍰', link: 'https://s.shopee.com.br/9pUpLu8ZUB', quantity: 1 },
             { name: 'Boleira', icon: '🎂', link: 'https://s.shopee.com.br/3qDcLvbz1B', quantity: 1 },
-            { name: 'Cafeteira', icon: '☕', link: 'https://s.shopee.com.br/3ValoQbRR0', quantity: 1 },
+            { name: 'Cafeteira', icon: '☕', link: 'https://s.shopee.com.br/3ValoQbRRO', quantity: 1 },
             { name: 'Caneca/Leiteira', icon: '🥛', link: 'https://s.shopee.com.br/5L2Q7UIEj2', quantity: 1 },
-            { name: 'Capa para almofadas', icon: '🛋️', link: 'https://s.shopee.com.br/8URz8R9q3k', quantity: 2 },
+            { name: 'Capa para almofadas', icon: '🛋️', link: 'https://s.shopee.com.br/8UzRz9R8q3', quantity: 4 },
             { name: 'Chaleira elétrica', icon: '💧', link: 'https://s.shopee.com.br/3ValvmBdCr', quantity: 1 },
             { name: 'Coberdrom', icon: '🛌', link: 'https://s.shopee.com.br/6fXnkMnIGs', quantity: 2 },
             { name: 'Copo de medida', icon: '🧪', link: 'https://s.shopee.com.br/8fIrzbJpP4', quantity: 1 },
-            { name: 'Edredom', icon: '🛌', link: 'https://s.shopee.com.br/4fmjMJlI6I', quantity: 2 },
+            { name: 'Edredom', icon: '🛌', link: 'https://s.shopee.com.br/4fmjMlJl6I', quantity: 2 },
             { name: 'Escorredor de louças', icon: '🍽️', link: 'https://s.shopee.com.br/5L2Q6UcoSm', quantity: 1 },
-            { name: 'Escorredor de macarrão', icon: '🍝', link: 'https://s.shopee.com.br/8UzRnrNViG', quantity: 1 },
+            { name: 'Escorredor de macarrão', icon: '🍝', link: 'https://s.shopee.com.br/8UzRnrNvIG', quantity: 1 },
             { name: 'Espremedor de laranja', icon: '🍊', link: 'https://s.shopee.com.br/6KuxE8q6fy', quantity: 1 },
-            { name: 'Ferro de passar', icon: '👔', link: 'https://s.shopee.com.br/LdkK9S2n6', quantity: 1 },
-            { name: 'Garrafa de café', icon: '☕', link: 'https://s.shopee.com.br/AKR60Tgy3I', quantity: 1 },
+            { name: 'Ferro de passar', icon: '👔', link: 'https://br.shp.ee/VC2uapk', quantity: 1 },
+            { name: 'Garrafa de café', icon: '☕', link: 'https://s.shopee.com.br/AKR60Tgy3l', quantity: 1 },
             { name: 'Jarra de suco', icon: '🍹', link: 'https://s.shopee.com.br/5AizrPyWsY', quantity: 1 },
             { name: 'Jogo americano (opção 1)', icon: '🍽️', link: 'https://s.shopee.com.br/2g1enQFqWo', quantity: 1 },
             { name: 'Jogo americano (opção 2)', icon: '🍽️', link: 'https://s.shopee.com.br/3AxvibCU1V', quantity: 1 },
             { name: 'Jogo de cama', icon: '🛏️', link: 'https://s.shopee.com.br/2g1eyITZDu', quantity: 3 },
-            { name: 'Jogo de copos', icon: '🥃', link: 'https://s.shopee.com.br/9pUpNty4yI', quantity: 2 },
-            { name: 'Jogo de copos (12 un)', icon: '🥃', link: 'https://s.shopee.com.br/9pUPNty4yI', quantity: 2 },
+            { name: 'Jogo de copos (12 un)', icon: '🥃', link: 'https://s.shopee.com.br/9pUpNty4yI', quantity: 2 },
             { name: 'Jogo de peneira', icon: '🧑‍🍳', link: 'https://s.shopee.com.br/4fmjKSXWfa', quantity: 1 },
             { name: 'Jogo de taças', icon: '🍷', link: 'https://s.shopee.com.br/3LHLeAQN9f', quantity: 2 },
-            { name: 'Jogo de talher', icon: '🍴', link: 'https://s.shopee.com.br/30eVE11RVi', quantity: 2 },
+            { name: 'Jogo de talher', icon: '🍴', link: 'https://s.shopee.com.br/30eVF11RVi', quantity: 2 },
             { name: 'Kit Bar', icon: '🍸', link: 'https://s.shopee.com.br/2ViEuztVwe', quantity: 1 },
             { name: 'Kit Banheiro', icon: '🛁', link: 'https://s.shopee.com.br/8UzS2RWjMK', quantity: 1 },
             { name: 'Kit Churrasco', icon: '🍖', link: 'https://s.shopee.com.br/803BSwpoa2', quantity: 1 },
             { name: 'Kit Cozinha', icon: '🍳', link: 'https://s.shopee.com.br/40X2OTzkcr', quantity: 1 },
-            { name: 'Kit Formas', icon: '🧑‍🍳', link: 'https://s.shopee.com.br/9pUPPfQcBE', quantity: 1 },
+            { name: 'Kit Formas', icon: '🧑‍🍳', link: 'https://s.shopee.com.br/9pUpPFqcBE', quantity: 1 },
             { name: 'Kit lavanderia/dispenser', icon: '🧼', link: 'https://s.shopee.com.br/6VENfeDjBM', quantity: 1 },
             { name: 'Kit Marinex', icon: '🍲', link: 'https://s.shopee.com.br/50PZgLlevr', quantity: 1 },
-            { name: 'Liquidificador', icon: '🥤', link: 'https://s.shopee.com.br/7pjI2X0nHK', quantity: 1 },
+            { name: 'Liquidificador', icon: '🥤', link: 'https://s.shopee.com.br/7pjl2X0nHK', quantity: 1 },
             { name: 'Manta', icon: '🧣', link: 'https://s.shopee.com.br/803BL2L24E', quantity: 2 },
             { name: 'Manta para sofá', icon: '🛋️', link: 'https://s.shopee.com.br/8zviX0Miyl', quantity: 1 },
-            { name: 'Martelo de carne', icon: '🔨', link: 'https://s.shpee.com.br/7KnUVIDH8e', quantity: 1 },
+            { name: 'Martelo de carne', icon: '🔨', link: 'https://s.shopee.com.br/7KnUVlDH8e', quantity: 1 },
             { name: 'Panela de pressão', icon: '🍳', link: 'https://s.shopee.com.br/2LOoVNX64A', quantity: 1 },
             { name: 'Panela de pressão elétrica', icon: '⚡', link: 'https://s.shopee.com.br/4q69TkTEcG', quantity: 1 },
             { name: 'Pipoqueira', icon: '🍿', link: 'https://s.shopee.com.br/8fIs5THyvs', quantity: 1 },
@@ -197,7 +195,7 @@
             { name: 'Processador/mixer', icon: '🌪️', link: 'https://s.shopee.com.br/3fuC7tKFD3', quantity: 1 },
             { name: 'Taça de sobremesa', icon: '🍨', link: 'https://s.shopee.com.br/5AizsrX2g8', quantity: 2 },
             { name: 'Tampa de microondas', icon: '🍲', link: 'https://s.shopee.com.br/9fBPIzy5dN', quantity: 1 },
-            { name: 'Tapete', icon: '🚪', link: 'https://s.shopee.com.br/1g97u2fVQv', quantity: 2 },
+            { name: 'Tapete de Banheiro', icon: '🚪', link: 'https://s.shopee.com.br/1g97u2fVQv', quantity: 2 },
             { name: 'Toalha de banho', icon: '🛀', link: 'https://s.shopee.com.br/4fmjRtwQLT', quantity: 4 },
             { name: 'Toalha de mesa', icon: '🍽️', link: 'https://s.shopee.com.br/2ViEaytJXK', quantity: 2 },
             { name: 'Toalha de rosto', icon: '🧼', link: 'https://s.shopee.com.br/803BQGDLU0', quantity: 4 },
@@ -243,8 +241,6 @@
                     const promises = initialGiftList.map(gift => {
                         return addDoc(giftsCollection, {
                             name: gift.name,
-                            link: gift.link || '#',
-                            icon: gift.icon || '🎁',
                             quantity: gift.quantity || 1,
                             chosenCount: 0,
                             chosenBy: []
@@ -282,11 +278,16 @@
                  return;
             }
             
-            localGiftsData = giftsFromFirebase;
-            localGiftsData.forEach(gift => {
-                if (gift.chosenBy && gift.chosenBy.includes(guestName)) {
+            localGiftsData = giftsFromFirebase.map(dbGift => {
+                if (dbGift.chosenBy && dbGift.chosenBy.includes(guestName)) {
                     currentUserHasChosen = true;
                 }
+                const localGift = initialGiftList.find(lg => lg.name === dbGift.name);
+                return { 
+                    ...dbGift, 
+                    link: localGift ? localGift.link : null,
+                    icon: localGift ? localGift.icon : '🎁'
+                };
             });
 
             if (currentUserHasChosen) {
